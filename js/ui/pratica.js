@@ -199,7 +199,7 @@ export function montar(container, ctx) {
         <input
           class="input-resposta"
           type="text"
-          inputmode="numeric"
+          inputmode="none"
           pattern="[0-9]*"
           aria-label="Digite a resposta"
           data-el="input"
