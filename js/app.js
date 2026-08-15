@@ -35,6 +35,7 @@ function prefsPadrao() {
     streakDias: 0,
     ultimaDataAcesso: null,
     filtroPraticar: null,
+    vozPreferidaURI: null,
   };
 }
 
@@ -85,6 +86,7 @@ function salvarPrefs(parcial) {
   estadoApp.prefs = { ...estadoApp.prefs, ...parcial };
   persistirPrefs(estadoApp.prefs);
   if (parcial.tema) aplicarTemaNoDocumento(estadoApp.prefs.tema);
+  if ('vozPreferidaURI' in parcial) tts.definirVozPreferida(estadoApp.prefs.vozPreferidaURI);
   return estadoApp.prefs;
 }
 
@@ -216,6 +218,7 @@ function renderizarTelaPausa(container) {
 export async function iniciar() {
   estadoApp.prefs = carregarPrefs();
   aplicarTemaNoDocumento(estadoApp.prefs.tema);
+  tts.definirVozPreferida(estadoApp.prefs.vozPreferidaURI);
 
   const resposta = await fetch('./data/tabuadas.json');
   estadoApp.tabuadasJson = await resposta.json();

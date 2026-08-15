@@ -58,6 +58,8 @@ async function renderizarDashboard(container, ctx) {
   const status = await ctx.analytics.calcularStatusPorTabuada();
   const ultimos7Dias = await ctx.analytics.calcularUltimos7Dias();
   const maxTotalDia = Math.max(1, ...ultimos7Dias.map((d) => d.total));
+  await ctx.tts.carregarVozes();
+  const vozesPtBR = ctx.tts.listarVozesPtBR();
 
   const raiz = document.createElement('div');
   raiz.innerHTML = `
@@ -113,6 +115,33 @@ async function renderizarDashboard(container, ctx) {
     </section>
 
     <section style="margin-top:24px;" class="campo">
+      <label for="select-voz">Voz do app (Conhecer, jogo Detetive)</label>
+      ${
+        vozesPtBR.length === 0
+          ? '<div class="aviso-caixa">Nenhuma voz em português foi encontrada neste aparelho — o app mostra o texto na tela em vez de falar.</div>'
+          : `
+            <select id="select-voz" data-el="select-voz">
+              <option value="">Automática (melhor voz disponível)</option>
+              ${vozesPtBR
+                .map(
+                  (v) =>
+                    `<option value="${v.voiceURI}" ${prefs.vozPreferidaURI === v.voiceURI ? 'selected' : ''}>${v.name}</option>`
+                )
+                .join('')}
+            </select>
+            <div class="linha-acoes" style="margin-top:8px;">
+              <button class="botao botao--secundario" type="button" data-acao="testar-voz">🔊 Testar voz</button>
+            </div>
+            <p style="color:var(--cor-texto-suave); font-size:0.85rem; margin-top:8px;">
+              Achou a voz muito robótica? No iPhone, baixe uma voz "Aprimorada"
+              em Ajustes → Acessibilidade → Conteúdo Falado → Vozes →
+              Português — ela aparece aqui automaticamente depois.
+            </p>
+          `
+      }
+    </section>
+
+    <section style="margin-top:24px;" class="campo">
       <label for="select-semana">Semana atual (agrupamento anti-interferência)</label>
       <select id="select-semana" data-el="select-semana">
         ${[1, 2, 3, 4, 5, 6].map((s) => `<option value="${s}" ${s === prefs.semanaAtual ? 'selected' : ''}>Semana ${s}</option>`).join('')}
@@ -153,6 +182,14 @@ async function renderizarDashboard(container, ctx) {
 
   raiz.querySelector('[data-el="select-semana"]').addEventListener('change', (e) => {
     ctx.salvarPrefs({ semanaAtual: Number(e.target.value) });
+  });
+
+  raiz.querySelector('[data-el="select-voz"]')?.addEventListener('change', (e) => {
+    ctx.salvarPrefs({ vozPreferidaURI: e.target.value || null });
+  });
+
+  raiz.querySelector('[data-acao="testar-voz"]')?.addEventListener('click', () => {
+    ctx.tts.falar('3 vezes 7 é igual a 21');
   });
 
   raiz.querySelector('[data-acao="pausar"]').addEventListener('click', () => {
