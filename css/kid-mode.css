@@ -1,0 +1,79 @@
+/* css/kid-mode.css
+ * Ajustes para o "modo criança": tipografia grande, formas bem arredondadas,
+ * áreas de toque generosas e microinterações simples. Sempre ativo — este
+ * app é feito para uma criança de 9 anos, não é um modo opcional.
+ */
+
+html {
+  font-size: 18px;
+}
+
+@media (min-width: 720px) {
+  html {
+    font-size: 20px;
+  }
+}
+
+body {
+  font-weight: 500;
+}
+
+.card-grande {
+  border-radius: 32px;
+  font-size: 1.3rem;
+}
+
+.card-grande__emoji {
+  font-size: 3rem;
+}
+
+.botao {
+  border-radius: 20px;
+  font-size: 1.15rem;
+  padding: 14px 26px;
+}
+
+.pergunta-conta {
+  font-size: clamp(2.4rem, 10vw, 3.6rem);
+}
+
+.input-resposta {
+  border-radius: 22px;
+  font-size: clamp(2rem, 12vw, 2.8rem);
+}
+
+/* pequena "respirada" ao acertar — sutil, sem exagero, sem som visual de punição */
+@keyframes tt-pulso-sucesso {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.pergunta-card--acertou {
+  animation: tt-pulso-sucesso 320ms ease;
+}
+
+.estrelas {
+  font-size: 2.8rem;
+}
+
+/* área de toque generosa em qualquer elemento interativo */
+button,
+a,
+input[type="number"],
+input[type="text"] {
+  min-height: var(--altura-toque-min);
+}
+
+.carrossel-tabuadas__item {
+  border-radius: 20px;
+  font-size: 1.4rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pergunta-card--acertou,
+  .card-grande {
+    animation: none !important;
+    transition: none !important;
+  }
+}

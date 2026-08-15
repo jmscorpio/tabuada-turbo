@@ -1,0 +1,148 @@
+/* css/theme.css
+ * Variáveis de tema (cores, raios, sombras) + tema claro (default) e
+ * escuro (via toggle, atributo data-tema="escuro" na <html>).
+ * Paleta alegre e neutra: roxo como primária, amarelo/verde/azul de apoio.
+ * Sem fontes externas — tipografia via system-ui/-apple-system.
+ */
+
+:root {
+  /* --- cores de marca --- */
+  --cor-primaria: #7c3aed;
+  --cor-primaria-clara: #ede9fe;
+  --cor-primaria-escura: #5b21b6;
+  --cor-primaria-contraste: #ffffff;
+
+  --cor-amarelo: #f5b301;
+  --cor-amarelo-clara: #fff4d6;
+  --cor-verde: #16a34a;
+  --cor-verde-clara: #dcfce7;
+  --cor-azul: #2563eb;
+  --cor-azul-clara: #dbeafe;
+  --cor-vermelho: #dc2626;
+  --cor-vermelho-clara: #fee2e2;
+
+  /* --- superfícies e texto --- */
+  --cor-fundo: #fef9ff;
+  --cor-superficie: #ffffff;
+  --cor-superficie-alt: #f6f0ff;
+  --cor-texto: #241132;
+  --cor-texto-suave: #5b5468;
+  --cor-borda: #e6d9fb;
+  --cor-foco: #1d4ed8;
+
+  --sombra-card: 0 6px 20px rgba(124, 58, 237, 0.14);
+  --sombra-suave: 0 2px 8px rgba(36, 17, 50, 0.08);
+
+  --raio-grande: 28px;
+  --raio-medio: 18px;
+  --raio-pequeno: 12px;
+
+  --fonte-base:
+    system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+
+  --altura-toque-min: 44px;
+  --transicao-padrao: 160ms ease;
+}
+
+:root[data-tema="escuro"] {
+  --cor-primaria: #a78bfa;
+  --cor-primaria-clara: #3b2467;
+  --cor-primaria-escura: #c4b5fd;
+  --cor-primaria-contraste: #1c1030;
+
+  --cor-amarelo: #fbbf24;
+  --cor-amarelo-clara: #4a3a12;
+  --cor-verde: #4ade80;
+  --cor-verde-clara: #143323;
+  --cor-azul: #60a5fa;
+  --cor-azul-clara: #122a4d;
+  --cor-vermelho: #f87171;
+  --cor-vermelho-clara: #401616;
+
+  --cor-fundo: #180f26;
+  --cor-superficie: #241a38;
+  --cor-superficie-alt: #2c2143;
+  --cor-texto: #f4eeff;
+  --cor-texto-suave: #c7bdd9;
+  --cor-borda: #3c2e57;
+  --cor-foco: #93c5fd;
+
+  --sombra-card: 0 6px 20px rgba(0, 0, 0, 0.4);
+  --sombra-suave: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--cor-fundo);
+  color: var(--cor-texto);
+  font-family: var(--fonte-base);
+  line-height: 1.4;
+  transition: background var(--transicao-padrao), color var(--transicao-padrao);
+}
+
+img,
+svg {
+  max-width: 100%;
+  display: block;
+}
+
+button {
+  font-family: inherit;
+  color: inherit;
+}
+
+a {
+  color: var(--cor-primaria);
+}
+
+.pular-link {
+  position: absolute;
+  left: -999px;
+  top: 0;
+  background: var(--cor-primaria);
+  color: var(--cor-primaria-contraste);
+  padding: 12px 20px;
+  border-radius: 0 0 var(--raio-pequeno) 0;
+  z-index: 1000;
+}
+
+.pular-link:focus {
+  left: 0;
+}
+
+:focus-visible {
+  outline: 3px solid var(--cor-foco);
+  outline-offset: 2px;
+}
+
+.app-container {
+  max-width: 900px;
+  margin: 0 auto;
+  min-height: 100vh;
+  padding: 16px;
+}
+
+@media (min-width: 720px) {
+  .app-container {
+    padding: 32px;
+  }
+}
+
+.carregando,
+.aviso-noscript {
+  text-align: center;
+  padding: 40px 16px;
+  color: var(--cor-texto-suave);
+  font-size: 1.1rem;
+}

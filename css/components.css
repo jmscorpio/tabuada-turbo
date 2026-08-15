@@ -1,0 +1,446 @@
+/* css/components.css
+ * Padrões de componentes reutilizados pelas telas (js/ui/*.js): cabeçalho,
+ * cards, botões, input de resposta, badges de status, carrossel, diálogo de
+ * PIN, cronômetro discreto, estrelas, gráfico simples de barras.
+ */
+
+/* --- layout comum de tela --- */
+
+.tela-cabecalho {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.tela-titulo {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--cor-primaria-escura, var(--cor-primaria));
+}
+
+.botao-voltar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--altura-toque-min);
+  height: var(--altura-toque-min);
+  border-radius: 50%;
+  border: none;
+  background: var(--cor-superficie-alt);
+  cursor: pointer;
+  font-size: 1.25rem;
+}
+
+/* --- botões --- */
+
+.botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: var(--altura-toque-min);
+  padding: 12px 24px;
+  border-radius: var(--raio-medio);
+  border: none;
+  background: var(--cor-primaria);
+  color: var(--cor-primaria-contraste);
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform var(--transicao-padrao), box-shadow var(--transicao-padrao);
+  box-shadow: var(--sombra-suave);
+}
+
+.botao:hover {
+  transform: translateY(-1px);
+}
+
+.botao:active {
+  transform: translateY(0);
+}
+
+.botao--secundario {
+  background: var(--cor-superficie-alt);
+  color: var(--cor-texto);
+}
+
+.botao--sucesso {
+  background: var(--cor-verde);
+}
+
+.botao--bloco {
+  width: 100%;
+}
+
+.botao-icone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--altura-toque-min);
+  height: var(--altura-toque-min);
+  border-radius: 50%;
+  border: none;
+  background: var(--cor-superficie-alt);
+  color: var(--cor-texto);
+  font-size: 1.3rem;
+  cursor: pointer;
+}
+
+/* --- cards grandes da home --- */
+
+.grade-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 420px) {
+  .grade-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card-grande {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 140px;
+  padding: 20px;
+  border-radius: var(--raio-grande);
+  border: none;
+  background: var(--cor-superficie);
+  box-shadow: var(--sombra-card);
+  cursor: pointer;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--cor-texto);
+  text-align: center;
+  transition: transform var(--transicao-padrao);
+}
+
+.card-grande:hover {
+  transform: translateY(-2px) scale(1.02);
+}
+
+.card-grande__emoji {
+  font-size: 2.6rem;
+  line-height: 1;
+}
+
+.card-grande--praticar { background: var(--cor-primaria-clara); }
+.card-grande--jogar { background: var(--cor-amarelo-clara); }
+.card-grande--conhecer { background: var(--cor-azul-clara); }
+.card-grande--entender { background: var(--cor-verde-clara); }
+
+/* --- streak --- */
+
+.streak {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 24px;
+  padding: 14px;
+  border-radius: var(--raio-medio);
+  background: var(--cor-superficie-alt);
+  font-weight: 700;
+  text-align: center;
+}
+
+.streak--aviso {
+  background: var(--cor-amarelo-clara);
+}
+
+/* --- pergunta de prática --- */
+
+.pergunta-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 32px 16px;
+  border-radius: var(--raio-grande);
+  background: var(--cor-superficie);
+  box-shadow: var(--sombra-card);
+}
+
+.pergunta-conta {
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--cor-primaria-escura, var(--cor-primaria));
+  text-align: center;
+}
+
+.input-resposta {
+  width: 100%;
+  max-width: 240px;
+  min-height: 64px;
+  font-size: 2.2rem;
+  text-align: center;
+  border: 3px solid var(--cor-borda);
+  border-radius: var(--raio-medio);
+  background: var(--cor-fundo);
+  color: var(--cor-texto);
+}
+
+.input-resposta:focus {
+  border-color: var(--cor-primaria);
+}
+
+.feedback-mensagem {
+  font-size: 1.2rem;
+  font-weight: 700;
+  min-height: 1.6em;
+  text-align: center;
+}
+
+.feedback-mensagem--sucesso { color: var(--cor-verde); }
+.feedback-mensagem--atencao { color: var(--cor-amarelo); }
+.feedback-mensagem--erro { color: var(--cor-primaria-escura, var(--cor-primaria)); }
+
+.cronometro-discreto {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--cor-superficie-alt);
+  color: var(--cor-texto-suave);
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+  box-shadow: var(--sombra-suave);
+}
+
+.barra-progresso {
+  width: 100%;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--cor-superficie-alt);
+  overflow: hidden;
+}
+
+.barra-progresso__preenchimento {
+  height: 100%;
+  background: var(--cor-primaria);
+  transition: width var(--transicao-padrao);
+}
+
+/* --- estrelas --- */
+
+.estrelas {
+  display: flex;
+  gap: 6px;
+  font-size: 2.4rem;
+  justify-content: center;
+}
+
+.estrela--apagada {
+  opacity: 0.25;
+}
+
+/* --- badges de status (painel dos pais) --- */
+
+.badge-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: break-word;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.badge-status--verde { background: var(--cor-verde-clara); color: var(--cor-verde); }
+.badge-status--amarelo { background: var(--cor-amarelo-clara); color: #92660a; }
+.badge-status--vermelho { background: var(--cor-vermelho-clara); color: var(--cor-vermelho); }
+
+.grade-tabuadas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+  gap: 10px;
+}
+
+.tabuada-status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 4px;
+  border-radius: var(--raio-pequeno);
+  background: var(--cor-superficie);
+  box-shadow: var(--sombra-suave);
+  font-weight: 700;
+  min-width: 0;
+}
+
+/* --- gráfico simples de barras (últimos 7 dias) --- */
+
+.grafico-semana {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  height: 140px;
+  padding: 8px;
+}
+
+.grafico-semana__coluna {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  height: 100%;
+  justify-content: flex-end;
+}
+
+.grafico-semana__barra {
+  width: 100%;
+  border-radius: 6px 6px 0 0;
+  background: var(--cor-primaria);
+  min-height: 4px;
+}
+
+.grafico-semana__rotulo {
+  font-size: 0.7rem;
+  color: var(--cor-texto-suave);
+}
+
+/* --- diálogo de PIN --- */
+
+.dialogo-pin {
+  max-width: 320px;
+  margin: 40px auto;
+  padding: 24px;
+  border-radius: var(--raio-grande);
+  background: var(--cor-superficie);
+  box-shadow: var(--sombra-card);
+  text-align: center;
+}
+
+.input-pin {
+  width: 100%;
+  font-size: 1.6rem;
+  text-align: center;
+  letter-spacing: 0.4em;
+  padding: 12px;
+  border: 3px solid var(--cor-borda);
+  border-radius: var(--raio-medio);
+  margin: 16px 0;
+}
+
+/* --- carrossel (Conhecer) --- */
+
+.carrossel-tabuadas {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 8px 0 16px;
+  scroll-snap-type: x mandatory;
+}
+
+.carrossel-tabuadas__item {
+  scroll-snap-align: start;
+  min-width: 64px;
+  min-height: var(--altura-toque-min);
+  border-radius: var(--raio-medio);
+  border: none;
+  background: var(--cor-superficie-alt);
+  font-size: 1.3rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.carrossel-tabuadas__item[aria-current="true"] {
+  background: var(--cor-primaria);
+  color: var(--cor-primaria-contraste);
+}
+
+.lista-fatos {
+  list-style: none;
+  margin: 16px 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lista-fatos__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-radius: var(--raio-medio);
+  background: var(--cor-superficie);
+  box-shadow: var(--sombra-suave);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+/* --- páginas ilustradas (Entender) --- */
+
+.pagina-entender {
+  text-align: center;
+  padding: 12px;
+}
+
+.pagina-entender__ilustracao {
+  margin: 16px auto;
+  max-width: 320px;
+}
+
+.paginacao {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.paginacao__ponto {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--cor-borda);
+  border: none;
+  padding: 0;
+}
+
+.paginacao__ponto[aria-current="true"] {
+  background: var(--cor-primaria);
+}
+
+/* --- avisos genéricos --- */
+
+.aviso-caixa {
+  padding: 16px;
+  border-radius: var(--raio-medio);
+  background: var(--cor-amarelo-clara);
+  color: var(--cor-texto);
+  font-size: 0.95rem;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+.campo label {
+  font-weight: 700;
+}
+
+.linha-acoes {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}

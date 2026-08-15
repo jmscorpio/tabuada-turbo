@@ -1,0 +1,560 @@
+{
+  "fatos": [
+    {
+      "a": 1,
+      "b": 1,
+      "chave": "1x1",
+      "semanaSugerida": 1,
+      "trivial": true,
+      "conflitaCom": []
+    },
+    {
+      "a": 1,
+      "b": 2,
+      "chave": "1x2",
+      "semanaSugerida": 1,
+      "trivial": true,
+      "conflitaCom": []
+    },
+    {
+      "a": 1,
+      "b": 3,
+      "chave": "1x3",
+      "semanaSugerida": 0,
+      "trivial": true,
+      "conflitaCom": []
+    },
+    {
+      "a": 1,
+      "b": 4,
+      "chave": "1x4",
+      "semanaSugerida": 2,
+      "trivial": true,
+      "conflitaCom": []
+    },
+    {
+      "a": 1,
+      "b": 5,
+      "chave": "1x5",
+      "semanaSugerida": 1,
+      "trivial": true,
+      "conflitaCom": []
+    },
+    {
+      "a": 1,
+      "b": 6,
+      "chave": "1x6",
+      "semanaSugerida": 4,
+      "trivial": true,
+      "conflitaCom": [
+        "1x7",
+        "1x8"
+      ]
+    },
+    {
+      "a": 1,
+      "b": 7,
+      "chave": "1x7",
+      "semanaSugerida": 5,
+      "trivial": true,
+      "conflitaCom": [
+        "1x6",
+        "1x8"
+      ]
+    },
+    {
+      "a": 1,
+      "b": 8,
+      "chave": "1x8",
+      "semanaSugerida": 3,
+      "trivial": true,
+      "conflitaCom": [
+        "1x6",
+        "1x7"
+      ]
+    },
+    {
+      "a": 1,
+      "b": 9,
+      "chave": "1x9",
+      "semanaSugerida": 2,
+      "trivial": true,
+      "conflitaCom": []
+    },
+    {
+      "a": 1,
+      "b": 10,
+      "chave": "1x10",
+      "semanaSugerida": 1,
+      "trivial": true,
+      "conflitaCom": []
+    },
+    {
+      "a": 2,
+      "b": 2,
+      "chave": "2x2",
+      "semanaSugerida": 1,
+      "trivial": false,
+      "conflitaCom": []
+    },
+    {
+      "a": 2,
+      "b": 3,
+      "chave": "2x3",
+      "semanaSugerida": 0,
+      "trivial": false,
+      "conflitaCom": []
+    },
+    {
+      "a": 2,
+      "b": 4,
+      "chave": "2x4",
+      "semanaSugerida": 2,
+      "trivial": false,
+      "conflitaCom": []
+    },
+    {
+      "a": 2,
+      "b": 5,
+      "chave": "2x5",
+      "semanaSugerida": 1,
+      "trivial": false,
+      "conflitaCom": []
+    },
+    {
+      "a": 2,
+      "b": 6,
+      "chave": "2x6",
+      "semanaSugerida": 4,
+      "trivial": false,
+      "conflitaCom": [
+        "2x7",
+        "2x8"
+      ]
+    },
+    {
+      "a": 2,
+      "b": 7,
+      "chave": "2x7",
+      "semanaSugerida": 5,
+      "trivial": false,
+      "conflitaCom": [
+        "2x6",
+        "2x8"
+      ]
+    },
+    {
+      "a": 2,
+      "b": 8,
+      "chave": "2x8",
+      "semanaSugerida": 3,
+      "trivial": false,
+      "conflitaCom": [
+        "2x6",
+        "2x7"
+      ]
+    },
+    {
+      "a": 2,
+      "b": 9,
+      "chave": "2x9",
+      "semanaSugerida": 2,
+      "trivial": false,
+      "conflitaCom": []
+    },
+    {
+      "a": 2,
+      "b": 10,
+      "chave": "2x10",
+      "semanaSugerida": 1,
+      "trivial": true,
+      "conflitaCom": []
+    },
+    {
+      "a": 3,
+      "b": 3,
+      "chave": "3x3",
+      "semanaSugerida": 0,
+      "trivial": false,
+      "conflitaCom": []
+    },
+    {
+      "a": 3,
+      "b": 4,
+      "chave": "3x4",
+      "semanaSugerida": 0,
+      "trivial": false,
+      "conflitaCom": []
+    },
+    {
+      "a": 3,
+      "b": 5,
+      "chave": "3x5",
+      "semanaSugerida": 0,
+      "trivial": false,
+      "conflitaCom": []
+    },
+    {
+      "a": 3,
+      "b": 6,
+      "chave": "3x6",
+      "semanaSugerida": 0,
+      "trivial": false,
+      "conflitaCom": [
+        "3x7",
+        "3x8"
+      ]
+    },
+    {
+      "a": 3,
+      "b": 7,
+      "chave": "3x7",
+      "semanaSugerida": 0,
+      "trivial": false,
+      "conflitaCom": [
+        "3x6",
+        "3x8"
+      ]
+    },
+    {
+      "a": 3,
+      "b": 8,
+      "chave": "3x8",
+      "semanaSugerida": 0,
+      "trivial": false,
+      "conflitaCom": [
+        "3x6",
+        "3x7"
+      ]
+    },
+    {
+      "a": 3,
+      "b": 9,
+      "chave": "3x9",
+      "semanaSugerida": 0,
+      "trivial": false,
+      "conflitaCom": []
+    },
+    {
+      "a": 3,
+      "b": 10,
+      "chave": "3x10",
+      "semanaSugerida": 0,
+      "trivial": true,
+      "conflitaCom": []
+    },
+    {
+      "a": 4,
+      "b": 4,
+      "chave": "4x4",
+      "semanaSugerida": 2,
+      "trivial": false,
+      "conflitaCom": []
+    },
+    {
+      "a": 4,
+      "b": 5,
+      "chave": "4x5",
+      "semanaSugerida": 2,
+      "trivial": false,
+      "conflitaCom": []
+    },
+    {
+      "a": 4,
+      "b": 6,
+      "chave": "4x6",
+      "semanaSugerida": 4,
+      "trivial": false,
+      "conflitaCom": [
+        "4x7",
+        "4x8"
+      ]
+    },
+    {
+      "a": 4,
+      "b": 7,
+      "chave": "4x7",
+      "semanaSugerida": 5,
+      "trivial": false,
+      "conflitaCom": [
+        "4x6",
+        "4x8"
+      ]
+    },
+    {
+      "a": 4,
+      "b": 8,
+      "chave": "4x8",
+      "semanaSugerida": 3,
+      "trivial": false,
+      "conflitaCom": [
+        "4x6",
+        "4x7"
+      ]
+    },
+    {
+      "a": 4,
+      "b": 9,
+      "chave": "4x9",
+      "semanaSugerida": 2,
+      "trivial": false,
+      "conflitaCom": []
+    },
+    {
+      "a": 4,
+      "b": 10,
+      "chave": "4x10",
+      "semanaSugerida": 2,
+      "trivial": true,
+      "conflitaCom": []
+    },
+    {
+      "a": 5,
+      "b": 5,
+      "chave": "5x5",
+      "semanaSugerida": 1,
+      "trivial": false,
+      "conflitaCom": []
+    },
+    {
+      "a": 5,
+      "b": 6,
+      "chave": "5x6",
+      "semanaSugerida": 4,
+      "trivial": false,
+      "conflitaCom": [
+        "5x7",
+        "5x8"
+      ]
+    },
+    {
+      "a": 5,
+      "b": 7,
+      "chave": "5x7",
+      "semanaSugerida": 5,
+      "trivial": false,
+      "conflitaCom": [
+        "5x6",
+        "5x8"
+      ]
+    },
+    {
+      "a": 5,
+      "b": 8,
+      "chave": "5x8",
+      "semanaSugerida": 3,
+      "trivial": false,
+      "conflitaCom": [
+        "5x6",
+        "5x7"
+      ]
+    },
+    {
+      "a": 5,
+      "b": 9,
+      "chave": "5x9",
+      "semanaSugerida": 2,
+      "trivial": false,
+      "conflitaCom": []
+    },
+    {
+      "a": 5,
+      "b": 10,
+      "chave": "5x10",
+      "semanaSugerida": 1,
+      "trivial": true,
+      "conflitaCom": []
+    },
+    {
+      "a": 6,
+      "b": 6,
+      "chave": "6x6",
+      "semanaSugerida": 4,
+      "trivial": false,
+      "conflitaCom": [
+        "6x7",
+        "6x8"
+      ]
+    },
+    {
+      "a": 6,
+      "b": 7,
+      "chave": "6x7",
+      "semanaSugerida": 5,
+      "trivial": false,
+      "conflitaCom": [
+        "6x8",
+        "7x8"
+      ]
+    },
+    {
+      "a": 6,
+      "b": 8,
+      "chave": "6x8",
+      "semanaSugerida": 4,
+      "trivial": false,
+      "conflitaCom": [
+        "6x7",
+        "7x8"
+      ]
+    },
+    {
+      "a": 6,
+      "b": 9,
+      "chave": "6x9",
+      "semanaSugerida": 4,
+      "trivial": false,
+      "conflitaCom": [
+        "7x9",
+        "8x9"
+      ]
+    },
+    {
+      "a": 6,
+      "b": 10,
+      "chave": "6x10",
+      "semanaSugerida": 4,
+      "trivial": true,
+      "conflitaCom": [
+        "7x10",
+        "8x10"
+      ]
+    },
+    {
+      "a": 7,
+      "b": 7,
+      "chave": "7x7",
+      "semanaSugerida": 5,
+      "trivial": false,
+      "conflitaCom": [
+        "6x7",
+        "7x8"
+      ]
+    },
+    {
+      "a": 7,
+      "b": 8,
+      "chave": "7x8",
+      "semanaSugerida": 5,
+      "trivial": false,
+      "conflitaCom": [
+        "6x7",
+        "6x8"
+      ]
+    },
+    {
+      "a": 7,
+      "b": 9,
+      "chave": "7x9",
+      "semanaSugerida": 5,
+      "trivial": false,
+      "conflitaCom": [
+        "6x9",
+        "8x9"
+      ]
+    },
+    {
+      "a": 7,
+      "b": 10,
+      "chave": "7x10",
+      "semanaSugerida": 5,
+      "trivial": true,
+      "conflitaCom": [
+        "6x10",
+        "8x10"
+      ]
+    },
+    {
+      "a": 8,
+      "b": 8,
+      "chave": "8x8",
+      "semanaSugerida": 3,
+      "trivial": false,
+      "conflitaCom": [
+        "6x8",
+        "7x8"
+      ]
+    },
+    {
+      "a": 8,
+      "b": 9,
+      "chave": "8x9",
+      "semanaSugerida": 3,
+      "trivial": false,
+      "conflitaCom": [
+        "6x9",
+        "7x9"
+      ]
+    },
+    {
+      "a": 8,
+      "b": 10,
+      "chave": "8x10",
+      "semanaSugerida": 3,
+      "trivial": true,
+      "conflitaCom": [
+        "6x10",
+        "7x10"
+      ]
+    },
+    {
+      "a": 9,
+      "b": 9,
+      "chave": "9x9",
+      "semanaSugerida": 2,
+      "trivial": false,
+      "conflitaCom": []
+    },
+    {
+      "a": 9,
+      "b": 10,
+      "chave": "9x10",
+      "semanaSugerida": 2,
+      "trivial": true,
+      "conflitaCom": []
+    },
+    {
+      "a": 10,
+      "b": 10,
+      "chave": "10x10",
+      "semanaSugerida": 1,
+      "trivial": true,
+      "conflitaCom": []
+    }
+  ],
+  "semanas": {
+    "1": {
+      "tabuadas": [
+        1,
+        2,
+        5,
+        10
+      ]
+    },
+    "2": {
+      "tabuadas": [
+        4,
+        9
+      ]
+    },
+    "3": {
+      "tabuadas": [
+        8
+      ]
+    },
+    "4": {
+      "tabuadas": [
+        6
+      ]
+    },
+    "5": {
+      "tabuadas": [
+        7
+      ]
+    },
+    "6": {
+      "tabuadas": [],
+      "integracao": true
+    }
+  }
+}
