@@ -12,6 +12,10 @@ rede após o primeiro carregamento** (importante para privacidade de dados
 de criança / LGPD). Todo o histórico de respostas fica só no navegador
 (IndexedDB); as preferências ficam no `localStorage`.
 
+🔗 **App publicado:** https://tabuada-turbo.vercel.app
+📦 **Repositório:** https://github.com/jmscorpio/tabuada-turbo (deploy
+automático na Vercel a cada `git push` na branch `main`)
+
 ## Como rodar localmente
 
 Não há build nem `npm install` — é só servir os arquivos estáticos.
@@ -91,7 +95,13 @@ tests/*.test.js            testes de scheduler, session e db
 
 ## Hospedar grátis na Vercel
 
-Como não há build nem backend, o deploy é o de um site estático puro:
+✅ Já está publicado e conectado ao GitHub: **https://tabuada-turbo.vercel.app**
+(projeto `tabuada-turbo` na Vercel, ligado a `jmscorpio/tabuada-turbo`). Todo
+`git push` na branch `main` dispara um novo deploy automático — não precisa
+repetir os passos abaixo.
+
+Caso precise recriar do zero (outra conta, outro fork etc.), como não há
+build nem backend, o deploy é o de um site estático puro:
 
 1. Crie uma conta gratuita em [vercel.com](https://vercel.com) (dá pra
    entrar com GitHub).
