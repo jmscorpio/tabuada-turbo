@@ -64,6 +64,39 @@ function renderEstrelasHtml(qtd) {
   ).join('');
 }
 
+function renderTecladoNumerico(container, input, aoConfirmar) {
+  const teclado = document.createElement('div');
+  teclado.className = 'grade-cards';
+  teclado.style.gridTemplateColumns = 'repeat(3, 1fr)';
+  teclado.style.gap = '8px';
+  teclado.setAttribute('role', 'group');
+  teclado.setAttribute('aria-label', 'Teclado numérico');
+
+  const teclas = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '⌫', '0', '✓'];
+  for (const tecla of teclas) {
+    const botao = document.createElement('button');
+    botao.type = 'button';
+    botao.className = 'botao botao--secundario';
+    botao.style.minHeight = '56px';
+    botao.style.fontSize = '1.4rem';
+    botao.textContent = tecla;
+    botao.setAttribute('aria-label', tecla === '⌫' ? 'Apagar' : tecla === '✓' ? 'Confirmar' : tecla);
+    botao.addEventListener('click', () => {
+      if (tecla === '⌫') {
+        input.value = input.value.slice(0, -1);
+      } else if (tecla === '✓') {
+        aoConfirmar();
+        return;
+      } else {
+        input.value += tecla;
+      }
+      input.focus();
+    });
+    teclado.appendChild(botao);
+  }
+  container.appendChild(teclado);
+}
+
 function cabecalho(titulo, aoVoltar) {
   const div = document.createElement('div');
   div.className = 'tela-cabecalho';
@@ -169,15 +202,18 @@ function renderizarSequenciaRapida(container, ctx, fatosMaduros) {
       <p style="text-align:center; font-weight:700;">Conta ${indice + 1} de ${TOTAL}</p>
       <div class="pergunta-card">
         <p class="pergunta-conta">${primeiro} × ${segundo}</p>
-        <input class="input-resposta" type="text" inputmode="numeric" pattern="[0-9]*" aria-label="Digite a resposta" data-el="input" />
+        <input class="input-resposta" type="text" inputmode="none" pattern="[0-9]*" aria-label="Digite a resposta" data-el="input" />
         <p class="feedback-mensagem" data-el="feedback" aria-live="polite"></p>
+        <div data-el="teclado"></div>
       </div>
     `;
     const input = areaJogo.querySelector('[data-el="input"]');
     input.focus();
+    const aoConfirmar = () => confirmar(fato, primeiro, segundo, input);
     input.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') confirmar(fato, primeiro, segundo, input);
+      if (e.key === 'Enter') aoConfirmar();
     });
+    renderTecladoNumerico(areaJogo.querySelector('[data-el="teclado"]'), input, aoConfirmar);
   }
 
   function confirmar(fato, primeiro, segundo, input) {
@@ -330,8 +366,9 @@ function renderizarBatalha(container, ctx, fatosMaduros, nivel) {
     areaJogo.innerHTML = `
       <div class="pergunta-card">
         <p class="pergunta-conta">${primeiro} × ${segundo}</p>
-        <input class="input-resposta" type="text" inputmode="numeric" pattern="[0-9]*" aria-label="Digite a resposta" data-el="input" />
+        <input class="input-resposta" type="text" inputmode="none" pattern="[0-9]*" aria-label="Digite a resposta" data-el="input" />
         <p class="feedback-mensagem" data-el="feedback" aria-live="polite"></p>
+        <div data-el="teclado"></div>
       </div>
     `;
     const input = areaJogo.querySelector('[data-el="input"]');
@@ -369,6 +406,7 @@ function renderizarBatalha(container, ctx, fatosMaduros, nivel) {
     input.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') confirmar();
     });
+    renderTecladoNumerico(areaJogo.querySelector('[data-el="teclado"]'), input, confirmar);
   }
 
   atualizarPlacar();
@@ -419,9 +457,10 @@ async function renderizarDetetive(container, ctx, fatosMaduros) {
             ? `<p style="font-size:2.4rem;" aria-hidden="true">🕵️👂</p><p>Escute e digite a resposta:</p>`
             : `<div class="aviso-caixa">Sem voz em português disponível neste aparelho — mostrando a conta na tela.</div><p class="pergunta-conta">${primeiro} × ${segundo}</p>`
         }
-        <input class="input-resposta" type="text" inputmode="numeric" pattern="[0-9]*" aria-label="Digite a resposta" data-el="input" />
+        <input class="input-resposta" type="text" inputmode="none" pattern="[0-9]*" aria-label="Digite a resposta" data-el="input" />
         <p class="feedback-mensagem" data-el="feedback" aria-live="polite"></p>
         ${vozOk ? '<button class="botao botao--secundario" type="button" data-acao="repetir-audio">🔊 Repetir</button>' : ''}
+        <div data-el="teclado"></div>
       </div>
     `;
 
@@ -453,6 +492,7 @@ async function renderizarDetetive(container, ctx, fatosMaduros) {
     input.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') confirmar();
     });
+    renderTecladoNumerico(areaJogo.querySelector('[data-el="teclado"]'), input, confirmar);
   }
 
   function finalizar() {
