@@ -3,7 +3,7 @@
 // O nome do cache leva a versão — mude CACHE_VERSAO para forçar a troca de
 // cache num novo deploy (cache busting).
 
-const CACHE_VERSAO = 'v2';
+const CACHE_VERSAO = 'v3';
 const CACHE_NOME = `tabuada-turbo-${CACHE_VERSAO}`;
 
 const APP_SHELL = [

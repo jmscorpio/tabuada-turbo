@@ -47,7 +47,7 @@ function renderTecladoNumerico(container, input, aoConfirmar) {
   const teclado = document.createElement('div');
   teclado.className = 'grade-cards';
   teclado.style.gridTemplateColumns = 'repeat(3, 1fr)';
-  teclado.style.gap = '8px';
+  teclado.style.gap = '6px';
   teclado.setAttribute('role', 'group');
   teclado.setAttribute('aria-label', 'Teclado numérico');
 
@@ -56,8 +56,8 @@ function renderTecladoNumerico(container, input, aoConfirmar) {
     const botao = document.createElement('button');
     botao.type = 'button';
     botao.className = 'botao botao--secundario';
-    botao.style.minHeight = '56px';
-    botao.style.fontSize = '1.4rem';
+    botao.style.minHeight = '46px';
+    botao.style.fontSize = '1.2rem';
     botao.textContent = tecla;
     botao.setAttribute('aria-label', tecla === '⌫' ? 'Apagar' : tecla === '✓' ? 'Confirmar' : tecla);
     botao.addEventListener('click', () => {
@@ -109,7 +109,7 @@ export function montar(container, ctx) {
       <h1 class="tela-titulo">Praticar</h1>
     </div>
     <div class="cronometro-discreto" data-el="cronometro">00:00</div>
-    <div class="barra-progresso" style="margin-bottom:16px;">
+    <div class="barra-progresso" style="margin-bottom:8px;">
       <div class="barra-progresso__preenchimento" data-el="barra" style="width:0%"></div>
     </div>
     <div data-el="conteudo"></div>
@@ -193,7 +193,7 @@ export function montar(container, ctx) {
     const rotuloFase = sessionState.fase === 'warmup' ? 'Aquecimento' : 'Fatos novos';
 
     elConteudo.innerHTML = `
-      <p style="text-align:center; color:var(--cor-texto-suave); font-weight:700;">${rotuloFase}</p>
+      <p style="text-align:center; color:var(--cor-texto-suave); font-weight:700; margin:0 0 6px;">${rotuloFase}</p>
       <div class="pergunta-card" data-el="card">
         <p class="pergunta-conta">${primeiro} × ${segundo}</p>
         <input

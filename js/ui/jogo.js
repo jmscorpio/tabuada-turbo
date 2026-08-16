@@ -68,7 +68,7 @@ function renderTecladoNumerico(container, input, aoConfirmar) {
   const teclado = document.createElement('div');
   teclado.className = 'grade-cards';
   teclado.style.gridTemplateColumns = 'repeat(3, 1fr)';
-  teclado.style.gap = '8px';
+  teclado.style.gap = '6px';
   teclado.setAttribute('role', 'group');
   teclado.setAttribute('aria-label', 'Teclado numérico');
 
@@ -77,8 +77,8 @@ function renderTecladoNumerico(container, input, aoConfirmar) {
     const botao = document.createElement('button');
     botao.type = 'button';
     botao.className = 'botao botao--secundario';
-    botao.style.minHeight = '56px';
-    botao.style.fontSize = '1.4rem';
+    botao.style.minHeight = '46px';
+    botao.style.fontSize = '1.2rem';
     botao.textContent = tecla;
     botao.setAttribute('aria-label', tecla === '⌫' ? 'Apagar' : tecla === '✓' ? 'Confirmar' : tecla);
     botao.addEventListener('click', () => {
@@ -199,7 +199,7 @@ function renderizarSequenciaRapida(container, ctx, fatosMaduros) {
     respondeu = false;
 
     areaJogo.innerHTML = `
-      <p style="text-align:center; font-weight:700;">Conta ${indice + 1} de ${TOTAL}</p>
+      <p style="text-align:center; font-weight:700; margin:0 0 6px;">Conta ${indice + 1} de ${TOTAL}</p>
       <div class="pergunta-card">
         <p class="pergunta-conta">${primeiro} × ${segundo}</p>
         <input class="input-resposta" type="text" inputmode="none" pattern="[0-9]*" aria-label="Digite a resposta" data-el="input" />
@@ -308,7 +308,8 @@ function renderizarBatalha(container, ctx, fatosMaduros, nivel) {
   const placar = document.createElement('p');
   placar.style.textAlign = 'center';
   placar.style.fontWeight = '800';
-  placar.style.fontSize = '1.3rem';
+  placar.style.fontSize = '1.2rem';
+  placar.style.margin = '0 0 6px';
   raiz.appendChild(placar);
 
   const areaJogo = document.createElement('div');
@@ -450,16 +451,16 @@ async function renderizarDetetive(container, ctx, fatosMaduros) {
     const inicio = Date.now();
 
     areaJogo.innerHTML = `
-      <p style="text-align:center; font-weight:700;">Conta ${indice + 1} de ${TOTAL}</p>
+      <p style="text-align:center; font-weight:700; margin:0 0 6px;">Conta ${indice + 1} de ${TOTAL}</p>
       <div class="pergunta-card">
         ${
           vozOk
-            ? `<p style="font-size:2.4rem;" aria-hidden="true">🕵️👂</p><p>Escute e digite a resposta:</p>`
-            : `<div class="aviso-caixa">Sem voz em português disponível neste aparelho — mostrando a conta na tela.</div><p class="pergunta-conta">${primeiro} × ${segundo}</p>`
+            ? `<p style="margin:0; font-size:1.5rem;">🕵️👂 <span style="font-size:1rem; font-weight:700;">Escute e digite:</span></p>`
+            : `<div class="aviso-caixa" style="margin:0;">Sem voz em português disponível neste aparelho — mostrando a conta na tela.</div><p class="pergunta-conta">${primeiro} × ${segundo}</p>`
         }
         <input class="input-resposta" type="text" inputmode="none" pattern="[0-9]*" aria-label="Digite a resposta" data-el="input" />
         <p class="feedback-mensagem" data-el="feedback" aria-live="polite"></p>
-        ${vozOk ? '<button class="botao botao--secundario" type="button" data-acao="repetir-audio">🔊 Repetir</button>' : ''}
+        ${vozOk ? '<button class="botao botao--secundario" type="button" data-acao="repetir-audio" style="min-height:44px; padding:6px 16px; font-size:0.95rem;">🔊 Repetir</button>' : ''}
         <div data-el="teclado"></div>
       </div>
     `;
