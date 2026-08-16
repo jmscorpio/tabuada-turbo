@@ -34,12 +34,12 @@ body {
 }
 
 .pergunta-conta {
-  font-size: clamp(1.9rem, 8vw, 2.6rem);
+  font-size: clamp(2.2rem, 9vw, 3.2rem);
 }
 
 .input-resposta {
   border-radius: 20px;
-  font-size: clamp(1.6rem, 9vw, 2.1rem);
+  font-size: clamp(1.9rem, 10vw, 2.5rem);
 }
 
 /* pequena "respirada" ao acertar — sutil, sem exagero, sem som visual de punição */

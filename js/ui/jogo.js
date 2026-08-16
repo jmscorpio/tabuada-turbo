@@ -68,7 +68,7 @@ function renderTecladoNumerico(container, input, aoConfirmar) {
   const teclado = document.createElement('div');
   teclado.className = 'grade-cards';
   teclado.style.gridTemplateColumns = 'repeat(3, 1fr)';
-  teclado.style.gap = '6px';
+  teclado.style.gap = '8px';
   teclado.setAttribute('role', 'group');
   teclado.setAttribute('aria-label', 'Teclado numérico');
 
@@ -77,8 +77,8 @@ function renderTecladoNumerico(container, input, aoConfirmar) {
     const botao = document.createElement('button');
     botao.type = 'button';
     botao.className = 'botao botao--secundario';
-    botao.style.minHeight = '46px';
-    botao.style.fontSize = '1.2rem';
+    botao.style.minHeight = '52px';
+    botao.style.fontSize = '1.35rem';
     botao.textContent = tecla;
     botao.setAttribute('aria-label', tecla === '⌫' ? 'Apagar' : tecla === '✓' ? 'Confirmar' : tecla);
     botao.addEventListener('click', () => {
