@@ -76,12 +76,11 @@ export function criarSessao({ fatosState, agora, semanaAtual, rng = Math.random 
  * Avalia uma resposta digitada. Duas situações:
  *
  * 1. Fluxo normal (corrigindoErro === false):
- *    - correto && tempoMs <= T_META  → acao 'proximo': avança a fila,
- *      registra o resultado.
- *    - correto && tempoMs > T_META   → acao 'repetirPergunta': NÃO avança
- *      a fila, não registra resultado ainda, apenas reinicia o cronômetro
- *      do mesmo fato (mensagem "isso! agora mais rápido" é responsabilidade
- *      da UI).
+ *    - correto → acao 'proximo': avança a fila e registra o resultado,
+ *      não importa a velocidade. O tempo de resposta (tempoMs) segue
+ *      influenciando o halfLife no scheduler (respostas rápidas fazem o
+ *      fato "amadurecer" mais rápido) — só não existe mais repetição de
+ *      pergunta na tela por causa da velocidade, pra não gerar irritação.
  *    - errado → acao 'erro': registra o resultado (uma única vez, correto
  *      false) e entra em modo de correção (sem punição, sem "vidas").
  *
@@ -90,7 +89,7 @@ export function criarSessao({ fatosState, agora, semanaAtual, rng = Math.random 
  *    nem gera um novo evento de resposta (não duplica o registro no
  *    scheduler) — só avança a fila quando acertar a cópia.
  *
- * @returns {{correto:boolean, tempoMs:number|null, acao:'proximo'|'repetirPergunta'|'erro'|'repetirCorrecao', novoEstado:object}}
+ * @returns {{correto:boolean, tempoMs:number|null, acao:'proximo'|'erro'|'repetirCorrecao', novoEstado:object}}
  */
 export function avaliarResposta(sessionState, respostaNumerica, fatosState, agora, rng = Math.random) {
   const { fatoAtual } = sessionState;
@@ -115,7 +114,7 @@ export function avaliarResposta(sessionState, respostaNumerica, fatosState, agor
 
   const tempoMs = agora - sessionState.inicioFatoAtual;
 
-  if (acertouValor && tempoMs <= T_META) {
+  if (acertouValor) {
     const resultados = [
       ...sessionState.resultados,
       { chave: fatoAtual.chave, correto: true, tempoMs },
@@ -123,15 +122,6 @@ export function avaliarResposta(sessionState, respostaNumerica, fatosState, agor
     const avancado = avancarIndice({ ...sessionState, resultados });
     const novoEstado = proximaPergunta(avancado, fatosState, rng, agora);
     return { correto: true, tempoMs, acao: 'proximo', novoEstado };
-  }
-
-  if (acertouValor && tempoMs > T_META) {
-    const novoEstado = {
-      ...sessionState,
-      tentativasFatoAtual: sessionState.tentativasFatoAtual + 1,
-      inicioFatoAtual: agora,
-    };
-    return { correto: true, tempoMs, acao: 'repetirPergunta', novoEstado };
   }
 
   // errou

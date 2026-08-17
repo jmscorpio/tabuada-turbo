@@ -90,14 +90,15 @@ describe('avaliarResposta', () => {
     assert.equal(r.novoEstado.resultados[0].correto, true);
   });
 
-  test('acerto > T_META repete a pergunta sem avançar índice', () => {
+  test('acerto > T_META também avança (sem repetir pergunta) — só a velocidade influencia o halfLife', () => {
     const { sessao, fatosState } = sessaoComUmFato();
     const r = avaliarResposta(sessao, 24, fatosState, AGORA + T_META + 500);
     assert.equal(r.correto, true);
-    assert.equal(r.acao, 'repetirPergunta');
-    assert.equal(r.novoEstado.indiceAtual, 0);
-    assert.equal(r.novoEstado.resultados.length, 0);
-    assert.equal(r.novoEstado.tentativasFatoAtual, 1);
+    assert.equal(r.acao, 'proximo');
+    assert.equal(r.novoEstado.indiceAtual, 1);
+    assert.equal(r.novoEstado.resultados.length, 1);
+    assert.equal(r.novoEstado.resultados[0].correto, true);
+    assert.ok(r.tempoMs > T_META);
   });
 
   test('erro registra resultado uma vez e entra em modo de correção', () => {

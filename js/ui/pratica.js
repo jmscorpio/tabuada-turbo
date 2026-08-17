@@ -253,14 +253,6 @@ export function montar(container, ctx) {
       return;
     }
 
-    if (r.acao === 'repetirPergunta') {
-      feedback.textContent = 'Isso! Agora tenta mais rápido 💪';
-      feedback.className = 'feedback-mensagem feedback-mensagem--atencao';
-      processando = false;
-      input.focus();
-      return;
-    }
-
     if (r.acao === 'erro') {
       registrarNoScheduler(chaveAtual, false, r.tempoMs);
       const respostaCerta = sessionState.fatoAtual.a * sessionState.fatoAtual.b;
