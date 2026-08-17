@@ -19,7 +19,13 @@ import {
   MAX_NOVOS_POR_SESSAO,
   AVANCO_SEMANA_PCT,
   AVANCO_SEMANA_SESSOES,
+  STATUS_VERMELHO_TAXA_ERRO,
 } from './config.js';
+
+// Quantos fatos "problemáticos" (erro recorrente) ganham uma repetição
+// extra dentro da mesma sessão — capado pra não inflar a fila (mesma lição
+// aprendida com o IR: reforço demais vira maratona, não ajuda).
+const REFORCO_MAX_FATOS_POR_SESSAO = 3;
 
 /**
  * Embaralha uma cópia do array (Fisher-Yates). `rng` deve retornar em [0,1).
@@ -147,6 +153,22 @@ export function isFatoMaduro(fatoState) {
 
   const ultimasN = fatoState.ultimasRespostas.slice(-MATURO_ULTIMAS_N);
   return ultimasN.every((r) => r.correto && r.tempoMs <= T_META);
+}
+
+/**
+ * Um fato é "problemático" quando tem erro recorrente nas respostas mais
+ * recentes (mesmo critério do status "vermelho" do painel dos pais).
+ * Usado por getNextFacts para dar prioridade e reforço extra a esses fatos
+ * dentro da própria sessão — sem punição, só mais oportunidade de praticar.
+ * @param {object} fatoState
+ * @param {number} [limiar] taxa de erro acima da qual o fato é considerado problemático
+ */
+export function isFatoProblematico(fatoState, limiar = STATUS_VERMELHO_TAXA_ERRO) {
+  if (!fatoState.introduzido) return false;
+  const respostas = fatoState.ultimasRespostas || [];
+  if (respostas.length === 0) return false;
+  const erros = respostas.filter((r) => !r.correto).length;
+  return erros / respostas.length > limiar;
 }
 
 /**
@@ -281,7 +303,12 @@ export function getNextFacts(
   { agora, limit, semanaAtual, maxNovosPorSessao = MAX_NOVOS_POR_SESSAO, rng = Math.random }
 ) {
   const revisaoOrdenada = getFatosParaRevisao(fatosState, agora);
-  const revisaoEmbaralhada = shuffle(revisaoOrdenada, rng);
+
+  // Fatos problemáticos (erro recorrente) vão primeiro na fila de revisão —
+  // assim, se a fila for cortada por limit, eles não somem por azar do sorteio.
+  const problematicos = shuffle(revisaoOrdenada.filter((f) => isFatoProblematico(f)), rng);
+  const normais = shuffle(revisaoOrdenada.filter((f) => !isFatoProblematico(f)), rng);
+  const revisaoPriorizada = [...problematicos, ...normais];
 
   const novosDisponiveis = shuffle(getFatosNovosDisponiveis(fatosState, semanaAtual), rng);
   const qtdNovosAlvo = Math.min(maxNovosPorSessao, Math.round(limit * 0.3));
@@ -293,9 +320,21 @@ export function getNextFacts(
   );
 
   const qtdRevisao = Math.max(0, limit - novosEscolhidos.length);
-  const fila = revisaoEmbaralhada.slice(0, qtdRevisao).map((f) => f.chave);
+  let fila = revisaoPriorizada.slice(0, qtdRevisao).map((f) => f.chave);
 
-  return intercalarVariosIR(fila, novosEscolhidos.map((f) => f.chave), conhecidos, { rng });
+  fila = intercalarVariosIR(fila, novosEscolhidos.map((f) => f.chave), conhecidos, { rng });
+
+  // Reforço: fatos problemáticos que entraram na fila ganham mais uma
+  // aparição na mesma sessão (capado, pra não inflar a fila como o IR antigo).
+  const chavesProblematicasNaFila = [...new Set(fila)].filter((chave) =>
+    problematicos.some((f) => f.chave === chave)
+  );
+  const paraReforcar = shuffle(chavesProblematicasNaFila, rng).slice(0, REFORCO_MAX_FATOS_POR_SESSAO);
+  if (paraReforcar.length > 0) {
+    fila = [...fila, ...paraReforcar];
+  }
+
+  return fila;
 }
 
 /**

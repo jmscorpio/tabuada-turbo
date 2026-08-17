@@ -8,6 +8,7 @@ import {
   calcularNextReview,
   registrarResposta,
   isFatoMaduro,
+  isFatoProblematico,
   getFatosParaRevisao,
   getFatosNovosDisponiveis,
   intercalarIR,
@@ -149,6 +150,48 @@ describe('isFatoMaduro', () => {
     }
     f = registrarResposta(f, { correto: true, tempoMs: T_META + 500, agora: AGORA });
     assert.equal(isFatoMaduro(f), false);
+  });
+});
+
+describe('isFatoProblematico', () => {
+  test('fato ainda não introduzido nunca é problemático', () => {
+    const f = criarFatoInicial(
+      { a: 4, b: 6, chave: '4x6', trivial: false, semanaSugerida: 4 },
+      { agora: AGORA }
+    );
+    assert.equal(isFatoProblematico(f), false);
+  });
+
+  test('fato introduzido sem histórico ainda não é problemático', () => {
+    let f = criarFatoInicial(
+      { a: 4, b: 6, chave: '4x6', trivial: false, semanaSugerida: 4 },
+      { agora: AGORA }
+    );
+    f = { ...f, introduzido: true };
+    assert.equal(isFatoProblematico(f), false);
+  });
+
+  test('mais de 40% de erro nas respostas recentes é problemático', () => {
+    let f = criarFatoInicial(
+      { a: 4, b: 6, chave: '4x6', trivial: false, semanaSugerida: 4 },
+      { agora: AGORA }
+    );
+    f = registrarResposta(f, { correto: false, tempoMs: 4000, agora: AGORA });
+    f = registrarResposta(f, { correto: true, tempoMs: 1000, agora: AGORA });
+    // 1 erro em 2 respostas = 50% > 40%
+    assert.equal(isFatoProblematico(f), true);
+  });
+
+  test('taxa de erro dentro do limiar não é problemático', () => {
+    let f = criarFatoInicial(
+      { a: 4, b: 6, chave: '4x6', trivial: false, semanaSugerida: 4 },
+      { agora: AGORA }
+    );
+    f = registrarResposta(f, { correto: true, tempoMs: 1000, agora: AGORA });
+    f = registrarResposta(f, { correto: true, tempoMs: 1000, agora: AGORA });
+    f = registrarResposta(f, { correto: false, tempoMs: 4000, agora: AGORA });
+    // 1 erro em 3 respostas ≈ 33% <= 40%
+    assert.equal(isFatoProblematico(f), false);
   });
 });
 
@@ -345,6 +388,45 @@ describe('getNextFacts', () => {
     // bloco pensado para durar 3–4 minutos. Agora eles compartilham as
     // rodadas de IR e o total fica bem menor.
     assert.ok(fila.length <= 45, `fila do bloco novo muito longa: ${fila.length}`);
+  });
+
+  test('fatos problemáticos (erro recorrente) têm prioridade e não somem quando a fila é cortada', () => {
+    const fatos = montarPoolFatos();
+    // fatos[10..14] são os "r0".."r4" (revisão vencida) — marca 2 deles
+    // como problemáticos (erro recorrente).
+    const r0 = fatos.find((f) => f.chave === 'r0');
+    const r1 = fatos.find((f) => f.chave === 'r1');
+    r0.ultimasRespostas = [{ correto: false, tempoMs: 4000 }, { correto: true, tempoMs: 1000 }];
+    r1.ultimasRespostas = [{ correto: false, tempoMs: 4000 }];
+
+    // limit bem menor que o total de fatos de revisão (5), forçando corte
+    for (let seed = 0; seed < 20; seed++) {
+      const fila = getNextFacts(fatos, {
+        agora: AGORA,
+        limit: 2,
+        semanaAtual: 1,
+        maxNovosPorSessao: 0,
+        rng: criarRng(seed),
+      });
+      assert.ok(fila.includes('r0'), `seed ${seed}: r0 (problemático) sumiu da fila`);
+      assert.ok(fila.includes('r1'), `seed ${seed}: r1 (problemático) sumiu da fila`);
+    }
+  });
+
+  test('fato problemático incluído na fila ganha uma repetição extra de reforço', () => {
+    const fatos = montarPoolFatos();
+    const r0 = fatos.find((f) => f.chave === 'r0');
+    r0.ultimasRespostas = [{ correto: false, tempoMs: 4000 }, { correto: true, tempoMs: 1000 }];
+
+    const fila = getNextFacts(fatos, {
+      agora: AGORA,
+      limit: 5,
+      semanaAtual: 1,
+      maxNovosPorSessao: 0,
+      rng: criarRng(3),
+    });
+    const ocorrencias = fila.filter((c) => c === 'r0').length;
+    assert.equal(ocorrencias, 2, 'fato problemático deveria aparecer 2 vezes (original + reforço)');
   });
 });
 
