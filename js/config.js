@@ -39,6 +39,12 @@ export const PIN_RESPONSAVEL = '1234';
 export const TABUADAS_CONHECIDAS_DEFAULT = [3];
 export const STATUS_VERMELHO_TAXA_ERRO = 0.4; // >40% de erro recente
 
+// Foco em números complexos: fatos cujos DOIS operandos estão nesta lista
+// (ex.: 2×3, 1×10) são tratados como "fáceis" e ficam com prioridade mais
+// baixa na fila de revisão — só entram na sessão se sobrar espaço depois
+// dos fatos difíceis disponíveis (aparecem "excepcionalmente").
+export const NUMEROS_FACEIS = [1, 2, 3, 10];
+
 // Identidade do app
 export const APP_NOME = 'Tabuada Turbo';
 export const CACHE_VERSAO = 'v1';

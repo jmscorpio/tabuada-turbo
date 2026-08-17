@@ -9,6 +9,7 @@ import {
   registrarResposta,
   isFatoMaduro,
   isFatoProblematico,
+  isFatoFacil,
   getFatosParaRevisao,
   getFatosNovosDisponiveis,
   intercalarIR,
@@ -192,6 +193,28 @@ describe('isFatoProblematico', () => {
     f = registrarResposta(f, { correto: false, tempoMs: 4000, agora: AGORA });
     // 1 erro em 3 respostas ≈ 33% <= 40%
     assert.equal(isFatoProblematico(f), false);
+  });
+});
+
+describe('isFatoFacil', () => {
+  test('fato com os dois operandos em NUMEROS_FACEIS (padrão 1/2/3/10) é fácil', () => {
+    assert.equal(isFatoFacil({ a: 2, b: 3 }), true);
+    assert.equal(isFatoFacil({ a: 1, b: 10 }), true);
+    assert.equal(isFatoFacil({ a: 10, b: 10 }), true);
+  });
+
+  test('fato com só um operando fácil continua difícil (o número complexo importa)', () => {
+    assert.equal(isFatoFacil({ a: 2, b: 7 }), false); // 7 é complexo
+    assert.equal(isFatoFacil({ a: 10, b: 6 }), false); // 6 é complexo
+  });
+
+  test('fato com os dois operandos complexos é difícil', () => {
+    assert.equal(isFatoFacil({ a: 6, b: 8 }), false);
+    assert.equal(isFatoFacil({ a: 4, b: 4 }), false);
+  });
+
+  test('aceita uma lista de números fáceis customizada', () => {
+    assert.equal(isFatoFacil({ a: 6, b: 8 }, [6, 8]), true);
   });
 });
 
@@ -427,6 +450,52 @@ describe('getNextFacts', () => {
     });
     const ocorrencias = fila.filter((c) => c === 'r0').length;
     assert.equal(ocorrencias, 2, 'fato problemático deveria aparecer 2 vezes (original + reforço)');
+  });
+
+  function montarPoolComDificuldade() {
+    // 2 fatos "fáceis" (números 1/2/3/10 dos dois lados) e 4 "difíceis"
+    // (pelo menos um operando complexo), todos vencidos para revisão.
+    const facil = (chave, a, b) => ({
+      chave, a, b, trivial: false, introduzido: true,
+      nextReview: AGORA - 1000, halfLife: 2, ultimasRespostas: [],
+      totalAcertos: 1, totalErros: 0, semanaSugerida: 0,
+    });
+    return [
+      facil('2x3', 2, 3),
+      facil('1x10', 1, 10),
+      facil('6x8', 6, 8),
+      facil('4x7', 4, 7),
+      facil('5x9', 5, 9),
+      facil('7x8', 7, 8),
+    ];
+  }
+
+  test('fatos fáceis (1/2/3/10 dos dois lados) ficam de fora quando há difíceis suficientes', () => {
+    const fatos = montarPoolComDificuldade(); // 2 fáceis + 4 difíceis
+    for (let seed = 0; seed < 15; seed++) {
+      const fila = getNextFacts(fatos, {
+        agora: AGORA,
+        limit: 4, // exatamente a quantidade de difíceis disponíveis
+        semanaAtual: 1,
+        maxNovosPorSessao: 0,
+        rng: criarRng(seed),
+      });
+      assert.ok(!fila.includes('2x3'), `seed ${seed}: fato fácil 2x3 não deveria entrar (há difíceis de sobra)`);
+      assert.ok(!fila.includes('1x10'), `seed ${seed}: fato fácil 1x10 não deveria entrar (há difíceis de sobra)`);
+    }
+  });
+
+  test('fatos fáceis entram quando não há difíceis suficientes pra preencher a sessão', () => {
+    const fatos = montarPoolComDificuldade(); // 2 fáceis + 4 difíceis = 6 no total
+    const fila = getNextFacts(fatos, {
+      agora: AGORA,
+      limit: 6, // pede mais do que os 4 difíceis conseguem preencher sozinhos
+      semanaAtual: 1,
+      maxNovosPorSessao: 0,
+      rng: criarRng(9),
+    });
+    assert.ok(fila.includes('2x3'), 'fato fácil deveria entrar como último recurso pra completar a sessão');
+    assert.ok(fila.includes('1x10'), 'fato fácil deveria entrar como último recurso pra completar a sessão');
   });
 });
 

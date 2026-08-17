@@ -20,6 +20,7 @@ import {
   AVANCO_SEMANA_PCT,
   AVANCO_SEMANA_SESSOES,
   STATUS_VERMELHO_TAXA_ERRO,
+  NUMEROS_FACEIS,
 } from './config.js';
 
 // Quantos fatos "problemáticos" (erro recorrente) ganham uma repetição
@@ -172,6 +173,19 @@ export function isFatoProblematico(fatoState, limiar = STATUS_VERMELHO_TAXA_ERRO
 }
 
 /**
+ * Um fato é "fácil" quando os DOIS operandos estão na lista de números
+ * fáceis (padrão: 1, 2, 3, 10) — usado por getNextFacts pra dar prioridade
+ * mais baixa a esses fatos na fila de revisão (foco em treinar os números
+ * complexos). Um fato com só um operando fácil (ex.: 7×2) continua tratado
+ * como difícil, porque o número complexo (7) ainda precisa de prática.
+ * @param {object} fatoState
+ * @param {number[]} [numerosFaceis]
+ */
+export function isFatoFacil(fatoState, numerosFaceis = NUMEROS_FACEIS) {
+  return numerosFaceis.includes(fatoState.a) && numerosFaceis.includes(fatoState.b);
+}
+
+/**
  * Fatos já introduzidos cuja revisão está vencida (nextReview <= agora),
  * ordenados do mais atrasado para o menos atrasado.
  * @param {object[]} fatosState
@@ -304,11 +318,16 @@ export function getNextFacts(
 ) {
   const revisaoOrdenada = getFatosParaRevisao(fatosState, agora);
 
-  // Fatos problemáticos (erro recorrente) vão primeiro na fila de revisão —
-  // assim, se a fila for cortada por limit, eles não somem por azar do sorteio.
+  // Prioridade em 3 níveis na fila de revisão:
+  // 1) problemáticos (erro recorrente) — nunca somem por azar do sorteio;
+  // 2) difíceis (padrão) — o grosso da prática;
+  // 3) fáceis (números 1/2/3/10 dos dois lados) — só entram se sobrar
+  //    espaço depois dos difíceis, ou seja, aparecem excepcionalmente.
+  const semProblema = revisaoOrdenada.filter((f) => !isFatoProblematico(f));
   const problematicos = shuffle(revisaoOrdenada.filter((f) => isFatoProblematico(f)), rng);
-  const normais = shuffle(revisaoOrdenada.filter((f) => !isFatoProblematico(f)), rng);
-  const revisaoPriorizada = [...problematicos, ...normais];
+  const dificeis = shuffle(semProblema.filter((f) => !isFatoFacil(f)), rng);
+  const faceis = shuffle(semProblema.filter((f) => isFatoFacil(f)), rng);
+  const revisaoPriorizada = [...problematicos, ...dificeis, ...faceis];
 
   const novosDisponiveis = shuffle(getFatosNovosDisponiveis(fatosState, semanaAtual), rng);
   const qtdNovosAlvo = Math.min(maxNovosPorSessao, Math.round(limit * 0.3));
