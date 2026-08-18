@@ -3,7 +3,7 @@
 // O nome do cache leva a versão — mude CACHE_VERSAO para forçar a troca de
 // cache num novo deploy (cache busting).
 
-const CACHE_VERSAO = 'v8';
+const CACHE_VERSAO = 'v9';
 const CACHE_NOME = `tabuada-turbo-${CACHE_VERSAO}`;
 
 const APP_SHELL = [
@@ -19,6 +19,7 @@ const APP_SHELL = [
   './js/db.js',
   './js/scheduler.js',
   './js/session.js',
+  './js/divisao.js',
   './js/tts.js',
   './js/analytics.js',
   './js/ui/home.js',
@@ -26,6 +27,7 @@ const APP_SHELL = [
   './js/ui/jogo.js',
   './js/ui/conhecer.js',
   './js/ui/entender.js',
+  './js/ui/dividir.js',
   './js/ui/responsavel.js',
   './data/tabuadas.json',
   './icons/icon-192.png',

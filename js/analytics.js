@@ -156,6 +156,39 @@ export async function calcularUltimos7Dias(agora = Date.now()) {
 }
 
 /**
+ * Status do módulo de Divisão para o painel dos pais. NÃO toca na store
+ * `sessoes` (essa é só da tabuada, alimenta o avanço de semana) — lê só
+ * `divisoes`.
+ * @param {{nivelDivisao:number}} prefsAtuais
+ */
+export async function calcularStatusDivisao(prefsAtuais, agora = Date.now()) {
+  const todas = await db.getTodasDivisoes();
+  const seteDiasAtras = agora - 7 * MS_POR_DIA;
+  const problemasUltimos7Dias = todas.filter((d) => d.timestamp >= seteDiasAtras).length;
+
+  const ultimas10 = todas.slice(-10);
+  const mediaPassosUltimas10 =
+    ultimas10.length > 0
+      ? ultimas10.reduce((soma, d) => soma + d.passos, 0) / ultimas10.length
+      : 0;
+  const mediaParUltimas10 =
+    ultimas10.length > 0
+      ? ultimas10.reduce((soma, d) => soma + d.par, 0) / ultimas10.length
+      : 0;
+
+  const pctFechamentoPrimeira =
+    todas.length > 0 ? todas.filter((d) => d.fechouDePrimeira).length / todas.length : 0;
+
+  return {
+    nivelAtual: prefsAtuais.nivelDivisao,
+    problemasUltimos7Dias,
+    mediaPassosUltimas10,
+    mediaParUltimas10,
+    pctFechamentoPrimeira,
+  };
+}
+
+/**
  * Re-semeia como maduros os fatos das tabuadas recém-marcadas como "já
  * sabidas" pelos pais (mesma lógica de seed usada na tabuada 3 no início).
  * @param {number[]} novasConhecidas

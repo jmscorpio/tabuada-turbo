@@ -45,6 +45,15 @@ export const STATUS_VERMELHO_TAXA_ERRO = 0.4; // >40% de erro recente
 // dos fatos difíceis disponíveis (aparecem "excepcionalmente").
 export const NUMEROS_FACEIS = [1, 2, 3, 10];
 
+// Divisão (Método das Estimativas) — sem pressão de tempo, foco em
+// compreensão e raciocínio flexível, não velocidade.
+export const DIV_PROBLEMAS_POR_SESSAO = 5;
+export const DIV_NIVEL_INICIAL = 1;
+export const DIV_NIVEL_MAX = 6;
+export const DIV_AVANCO_JANELA = 5; // olha os últimos N problemas do nível
+export const DIV_AVANCO_MIN_LIMPOS = 4; // avança com N deles "limpos" (1ª tentativa de fechamento)
+export const DIV_ESTRELA_FOLGA = 2; // 2 estrelas até par+DIV_ESTRELA_FOLGA passos
+
 // Identidade do app
 export const APP_NOME = 'Tabuada Turbo';
 // A versão do cache do PWA vive em sw.js (CACHE_VERSAO de lá): Service

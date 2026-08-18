@@ -135,6 +135,14 @@
 .card-grande--jogar { background: var(--cor-amarelo-clara); }
 .card-grande--conhecer { background: var(--cor-azul-clara); }
 .card-grande--entender { background: var(--cor-verde-clara); }
+.card-grande--dividir { background: var(--cor-laranja-clara); }
+
+/* 5º card (Dividir) ocupa a linha inteira em telas largas, onde a grade tem
+ * 2 colunas, pra não sobrar um buraco do lado dele; abaixo de 420px a grade
+ * já vira 1 coluna e este modificador não tem efeito visual. */
+.card-grande--full {
+  grid-column: 1 / -1;
+}
 
 /* --- streak --- */
 
@@ -445,4 +453,163 @@
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
+}
+
+/* --- chave da divisão (Método das Estimativas) --- */
+
+.chave-divisao {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 100%;
+  max-width: 260px;
+  margin: 0 auto;
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  font-size: 1.3rem;
+  max-height: 34vh;
+  overflow-y: auto;
+  padding: 6px 2px;
+}
+
+.chave-divisao__cel {
+  padding: 3px 10px;
+  white-space: nowrap;
+}
+
+.chave-divisao__cel--esquerda {
+  text-align: right;
+}
+
+.chave-divisao__cel--direita {
+  text-align: left;
+  border-left: 3px solid var(--cor-borda);
+  color: var(--cor-texto-suave);
+}
+
+.chave-divisao__cel--cabecalho.chave-divisao__cel--direita {
+  border-bottom: 3px solid var(--cor-texto);
+  padding-bottom: 6px;
+  color: var(--cor-texto);
+}
+
+.chave-divisao__cel--subtracao {
+  color: var(--cor-primaria-escura, var(--cor-primaria));
+}
+
+.chave-divisao__cel--estimativa {
+  color: var(--cor-texto);
+}
+
+.chave-divisao__cel--final {
+  font-size: 1.5rem;
+  color: var(--cor-verde);
+}
+
+.chave-divisao__cel--nova {
+  animation: tt-chave-entra 260ms ease;
+}
+
+@keyframes tt-chave-entra {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chave-divisao__cel--nova {
+    animation: none;
+  }
+}
+
+/* --- overlay da Tabela de Pitágoras (consulta livre, não gasta estrela) --- */
+
+.overlay-tabela {
+  position: fixed;
+  inset: 0;
+  background: rgba(24, 15, 38, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 100;
+}
+
+.overlay-tabela__painel {
+  background: #ffffff;
+  color: #241132;
+  border-radius: var(--raio-grande);
+  padding: 20px 16px 16px;
+  max-width: 480px;
+  width: 100%;
+  max-height: 88vh;
+  overflow-y: auto;
+  box-shadow: var(--sombra-card);
+  position: relative;
+}
+
+.overlay-tabela__titulo {
+  margin: 0 0 8px;
+  font-size: 1.2rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.overlay-tabela__fechar {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 40px;
+  height: 40px;
+  min-height: 0;
+  border-radius: 50%;
+  border: none;
+  background: #f2eefc;
+  color: #241132;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+/* 11×11 (cabeçalhos + 10×10): exceção deliberada ao toque mínimo de 44px do
+ * resto do app — uma tabela de consulta densa não cabe em 390px com células
+ * desse tamanho. Mantém pelo menos ~24px (mínimo AA do WCAG 2.2 pra alvo de
+ * toque), suficiente pra uma ferramenta de consulta, não de ação primária. */
+.tabela-pitagoras {
+  display: grid;
+  grid-template-columns: repeat(11, minmax(24px, 1fr));
+  gap: 3px;
+  margin-top: 8px;
+}
+
+.tabela-pitagoras__celula {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  border-radius: 6px;
+  border: none;
+  background: #f2eefc;
+  color: #241132;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 0;
+  cursor: default;
+}
+
+.tabela-pitagoras__celula--canto {
+  background: transparent;
+}
+
+.tabela-pitagoras__celula--cabecalho {
+  cursor: pointer;
+  background: #e6d9fb;
+  font-weight: 800;
+}
+
+.tabela-pitagoras__celula--selecionada {
+  background: #7c3aed;
+  color: #ffffff;
+}
+
+.tabela-pitagoras__celula--destacada {
+  outline: 3px solid #ea580c;
+  outline-offset: -3px;
 }

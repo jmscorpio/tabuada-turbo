@@ -8,10 +8,11 @@
 import * as db from './db.js';
 import * as scheduler from './scheduler.js';
 import * as session from './session.js';
+import * as divisao from './divisao.js';
 import * as analytics from './analytics.js';
 import * as tts from './tts.js';
 import * as config from './config.js';
-import { TABUADAS_CONHECIDAS_DEFAULT, SEMANA_INICIAL } from './config.js';
+import { TABUADAS_CONHECIDAS_DEFAULT, SEMANA_INICIAL, DIV_NIVEL_INICIAL } from './config.js';
 
 const CHAVE_PREFS = 'tt_prefs_v1';
 
@@ -22,6 +23,7 @@ const ROTAS = {
   '/jogar': 'jogo',
   '/conhecer': 'conhecer',
   '/entender': 'entender',
+  '/dividir': 'dividir',
   '/responsavel': 'responsavel',
 };
 
@@ -31,6 +33,7 @@ function prefsPadrao() {
     ultimoModo: 'home',
     tabuadasConhecidas: [...TABUADAS_CONHECIDAS_DEFAULT],
     semanaAtual: SEMANA_INICIAL,
+    nivelDivisao: DIV_NIVEL_INICIAL,
     pausaAteTimestamp: null,
     streakDias: 0,
     ultimaDataAcesso: null,
@@ -131,6 +134,7 @@ function montarCtx() {
     db,
     scheduler,
     session,
+    divisao,
     analytics,
     tts,
     config,

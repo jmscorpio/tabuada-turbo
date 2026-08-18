@@ -95,18 +95,27 @@ class FakeDatabase {
 class FakeIndexedDB {
   constructor() {
     this._dbs = new Map();
+    this._versoes = new Map();
   }
-  open(nome) {
+  open(nome, versao = 1) {
     const req = new FakeRequest();
     queueMicrotask(() => {
       let db = this._dbs.get(nome);
+      const versaoAtual = this._versoes.get(nome) || 0;
       const ehNovo = !db;
       if (!db) {
         db = new FakeDatabase();
         this._dbs.set(nome, db);
       }
       req.result = db;
-      if (ehNovo && req.onupgradeneeded) req.onupgradeneeded({ target: req });
+      // Dispara onupgradeneeded tanto num banco novo quanto num banco já
+      // existente sendo reaberto com versão maior — como o IndexedDB real,
+      // pra simular migração (os guards `contains` do app decidem o que
+      // criar de novo sem mexer no que já existe).
+      if ((ehNovo || versao > versaoAtual) && req.onupgradeneeded) {
+        req.onupgradeneeded({ target: req });
+      }
+      this._versoes.set(nome, versao);
       if (req.onsuccess) req.onsuccess({ target: req });
     });
     return req;
@@ -185,10 +194,11 @@ describe('js/db.js', () => {
     assert.equal(tudo.sessoes.length, 1);
   });
 
-  test('resetParaTestes limpa as 3 stores', async () => {
+  test('resetParaTestes limpa as 4 stores', async () => {
     await db.putFato({ chave: 'x', halfLife: 1 });
     await db.addResposta({ chave: 'x', correto: true, tempoMs: 1, timestamp: 1 });
     await db.addSessao({ data: 'd', totalFatos: 1, acertos: 1, erros: 0 });
+    await db.addDivisao({ timestamp: 1, dividendo: 60, divisor: 5, quociente: 12, resto: 0 });
 
     await db.resetParaTestes();
 
@@ -196,5 +206,64 @@ describe('js/db.js', () => {
     assert.equal(tudo.fatos.length, 0);
     assert.equal(tudo.respostas.length, 0);
     assert.equal(tudo.sessoes.length, 0);
+    assert.equal(tudo.divisoes.length, 0);
+  });
+
+  test('addDivisao gera id autoIncrement e getTodasDivisoes respeita ordem', async () => {
+    await db.resetParaTestes();
+    await db.addDivisao({ timestamp: 1, dividendo: 60, divisor: 5, quociente: 12, resto: 0, nivel: 1 });
+    await db.addDivisao({ timestamp: 2, dividendo: 58, divisor: 7, quociente: 8, resto: 2, nivel: 2 });
+    const todas = await db.getTodasDivisoes();
+    assert.equal(todas.length, 2);
+    assert.deepEqual(
+      todas.map((d) => d.dividendo),
+      [60, 58]
+    );
+  });
+
+  test('exportarTudo inclui divisoes', async () => {
+    await db.resetParaTestes();
+    await db.addDivisao({ timestamp: 1, dividendo: 60, divisor: 5, quociente: 12, resto: 0, nivel: 1 });
+    const tudo = await db.exportarTudo();
+    assert.equal(tudo.divisoes.length, 1);
+    assert.equal(tudo.divisoes[0].dividendo, 60);
+  });
+});
+
+describe('migração v1 → v2 (store divisoes nova, sem perder dados de tabuada)', () => {
+  test('banco pré-existente sem a store divisoes ganha ela ao reabrir na v2, preservando fatos/respostas/sessões', async () => {
+    // Simula um banco já em produção na v1: 3 stores, já com dados, sem
+    // `divisoes`. Registrado manualmente (não via js/db.js) numa instância
+    // NOVA e isolada do fake, com versão 1 já "commitada".
+    const fakeIsolado = new FakeIndexedDB();
+    const dbV1 = new FakeDatabase();
+    dbV1.createObjectStore('fatos', { keyPath: 'chave' });
+    dbV1.createObjectStore('respostas', { keyPath: 'id', autoIncrement: true });
+    dbV1.createObjectStore('sessoes', { keyPath: 'id', autoIncrement: true });
+    const opsFatos = dbV1._stores.get('fatos');
+    opsFatos.data.set('3x7', { chave: '3x7', halfLife: 7, introduzido: true });
+    const opsRespostas = dbV1._stores.get('respostas');
+    opsRespostas.data.set(1, { id: 1, chave: '3x7', correto: true, tempoMs: 900, timestamp: 1 });
+    fakeIsolado._dbs.set('tabuada-turbo-db', dbV1);
+    fakeIsolado._versoes.set('tabuada-turbo-db', 1);
+
+    globalThis.indexedDB = fakeIsolado;
+
+    // Cache-busting: força o Node a reexecutar js/db.js do zero (conexaoPromise
+    // limpo), em vez de reusar o módulo já aberto na v2 pelos testes acima.
+    const dbMigrado = await import('../js/db.js?migracao-v1-v2');
+
+    const fatos = await dbMigrado.getTodosFatos();
+    assert.equal(fatos.length, 1);
+    assert.equal(fatos[0].chave, '3x7');
+
+    const respostas = await dbMigrado.getTodasRespostas();
+    assert.equal(respostas.length, 1);
+
+    // A store nova existe e funciona (prova que o onupgradeneeded rodou de
+    // fato na migração, não só na criação de um banco do zero).
+    await dbMigrado.addDivisao({ timestamp: 1, dividendo: 60, divisor: 5, quociente: 12, resto: 0, nivel: 1 });
+    const divisoes = await dbMigrado.getTodasDivisoes();
+    assert.equal(divisoes.length, 1);
   });
 });

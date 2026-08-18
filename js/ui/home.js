@@ -71,6 +71,10 @@ export function montar(container, ctx) {
         <span class="card-grande__emoji" aria-hidden="true">💡</span>
         Entender
       </button>
+      <button class="card-grande card-grande--dividir card-grande--full" type="button" data-rota="/dividir">
+        <span class="card-grande__emoji" aria-hidden="true">➗</span>
+        Dividir
+      </button>
     </div>
 
     <div class="streak ${streak.aviso ? 'streak--aviso' : ''}">

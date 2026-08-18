@@ -20,6 +20,8 @@
   --cor-azul-clara: #dbeafe;
   --cor-vermelho: #dc2626;
   --cor-vermelho-clara: #fee2e2;
+  --cor-laranja: #ea580c;
+  --cor-laranja-clara: #ffedd5;
 
   /* --- superfícies e texto --- */
   --cor-fundo: #fef9ff;
@@ -58,6 +60,8 @@
   --cor-azul-clara: #122a4d;
   --cor-vermelho: #f87171;
   --cor-vermelho-clara: #401616;
+  --cor-laranja: #fb923c;
+  --cor-laranja-clara: #4a2c12;
 
   --cor-fundo: #180f26;
   --cor-superficie: #241a38;

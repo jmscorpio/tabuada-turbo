@@ -55,6 +55,7 @@ async function renderizarDashboard(container, ctx) {
   const status = await ctx.analytics.calcularStatusPorTabuada();
   const ultimos7Dias = await ctx.analytics.calcularUltimos7Dias();
   const maxTotalDia = Math.max(1, ...ultimos7Dias.map((d) => d.total));
+  const statusDivisao = await ctx.analytics.calcularStatusDivisao(prefs);
   await ctx.tts.carregarVozes();
   const vozesPtBR = ctx.tts.listarVozesPtBR();
 
@@ -145,6 +146,34 @@ async function renderizarDashboard(container, ctx) {
       </select>
     </section>
 
+    <section style="margin-top:24px;">
+      <h2 class="tela-titulo" style="font-size:1.1rem;">Divisão (Método das Estimativas)</h2>
+      <p style="color:var(--cor-texto-suave); font-size:0.9rem;">
+        Sem cronômetro nem meta de tempo — o foco é ela aprender a tirar
+        quantidades maiores de uma vez, no ritmo dela.
+      </p>
+      <div class="campo">
+        <label for="select-nivel-divisao">Nível atual (1 a 6)</label>
+        <select id="select-nivel-divisao" data-el="select-nivel-divisao">
+          ${[1, 2, 3, 4, 5, 6].map((n) => `<option value="${n}" ${n === statusDivisao.nivelAtual ? 'selected' : ''}>Nível ${n}</option>`).join('')}
+        </select>
+      </div>
+      <div class="grade-tabuadas">
+        <div class="tabuada-status">
+          <span>${statusDivisao.problemasUltimos7Dias}</span>
+          <small style="text-align:center;">problemas nos últimos 7 dias</small>
+        </div>
+        <div class="tabuada-status">
+          <span>${statusDivisao.mediaPassosUltimas10.toFixed(1)} / ${statusDivisao.mediaParUltimas10.toFixed(1)}</span>
+          <small style="text-align:center;">passos usados / passos-referência (últimas 10)</small>
+        </div>
+        <div class="tabuada-status">
+          <span>${Math.round(statusDivisao.pctFechamentoPrimeira * 100)}%</span>
+          <small style="text-align:center;">fechou de primeira</small>
+        </div>
+      </div>
+    </section>
+
     <section style="margin-top:24px;" class="campo">
       <label for="input-horas-pausa">Pausar o app por quantas horas?</label>
       <div class="linha-acoes">
@@ -179,6 +208,10 @@ async function renderizarDashboard(container, ctx) {
 
   raiz.querySelector('[data-el="select-semana"]').addEventListener('change', (e) => {
     ctx.salvarPrefs({ semanaAtual: Number(e.target.value) });
+  });
+
+  raiz.querySelector('[data-el="select-nivel-divisao"]').addEventListener('change', (e) => {
+    ctx.salvarPrefs({ nivelDivisao: Number(e.target.value) });
   });
 
   raiz.querySelector('[data-el="select-voz"]')?.addEventListener('change', (e) => {

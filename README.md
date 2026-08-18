@@ -76,13 +76,45 @@ js/app.js                  estado global + roteador de views por hash
 js/db.js                   wrapper do IndexedDB
 js/scheduler.js            repetição espaçada adaptativa + IR (lógica pura)
 js/session.js              loop de sessão diário (lógica pura)
+js/divisao.js              divisão pelo Método das Estimativas (lógica pura)
 js/tts.js                  Web Speech API em pt-BR, com degradação graciosa
 js/analytics.js            tracking local (liga scheduler + db + prefs)
-js/ui/*.js                 as 6 telas (home, praticar, jogar, conhecer,
-                            entender, responsável)
+js/ui/*.js                 as 7 telas (home, praticar, jogar, conhecer,
+                            entender, dividir, responsável)
 data/tabuadas.json         55 fatos únicos + agrupamento semanal
-tests/*.test.js            testes de scheduler, session e db
+tests/*.test.js            testes de scheduler, session, db e divisão
 ```
+
+## Dividir — Método das Estimativas
+
+5º card da tela inicial. Ensina divisão do jeito que o livro do 4º ano
+ensina: a criança retira do dividendo múltiplos do divisor que ELA escolhe
+("estimativas"), quantas vezes quiser, até o resto ficar menor que o
+divisor — sem um único caminho "certo" (60÷5 por seis vezes "2", por "10 e
+2" ou direto por "12" valem igual). Ao final de cada conta, ela digita o
+quociente total (a soma das estimativas) e, se houver, o resto.
+
+**Sem pressão de tempo nenhuma**: nada de cronômetro visível, nada de meta
+de milissegundos — o foco é compreensão e raciocínio flexível, não
+velocidade. Estimar alto demais e corrigir faz parte do método: a mensagem
+é sempre gentil ("tenta um número menor") e nunca conta como erro.
+
+- Sessão de 5 problemas, calibrados por nível (1 a 6, do livro/caderno do
+  4º ano — o nível 6 chega a dividendos de 4 dígitos). O divisor sorteado
+  dá preferência às tabuadas que a criança já domina bem no módulo de
+  tabuada (via os mesmos dados de maturidade do `scheduler.js`).
+- Metade dos problemas vem com um enunciado (bombons, gibis, figurinhas,
+  metros de corda etc., com TTS opcional), metade "seco" (só a conta).
+- Estrelas por número de passos usados vs. a decomposição por valor
+  posicional do quociente (3⭐ até o "par", nunca 0 — caminho mais longo é
+  caminho válido, só ganha um incentivo pra tentar tirar mais de uma vez).
+- Botão **📋 Tabela** sempre visível abre a Tabela de Pitágoras pra
+  consulta livre (não gasta estrela, não registra nada — o livro incentiva
+  consultar).
+- Nível avança sozinho (4 de 5 problemas "fechados de primeira" no nível
+  atual), ajustável manualmente no painel dos pais.
+- Fica numa store própria no IndexedDB (`divisoes`) — **não** entra na
+  store `sessoes` da tabuada, então não interfere no avanço de semana.
 
 ## Instalar no iPhone (Safari)
 
@@ -126,8 +158,12 @@ versão MVP, definido em `js/config.js`). O painel mostra:
   padrão) — marcar uma tabuada aqui já a considera dominada, sem precisar
   mexer em código.
 - Seletor da semana atual do agrupamento anti-interferência.
+- Seção **Divisão**: nível atual (com seletor manual 1–6), problemas
+  resolvidos nos últimos 7 dias, média de passos usados vs. passos de
+  referência (últimas 10 contas — o termômetro de "estimativas maiores") e
+  % de fechamento de primeira.
 - Botão para pausar o app por X horas.
-- Botão para exportar todos os dados em JSON.
+- Botão para exportar todos os dados em JSON (inclui a store `divisoes`).
 
 ## Critérios manuais — para o responsável testar
 
@@ -141,6 +177,15 @@ conferir na prática:
       em português instalada, o app deve degradar graciosamente: mostra o
       texto, segue sem áudio, e o jogo "Detetive" avisa e exibe a conta na
       tela em vez de travar.
+- [ ] Em **Dividir**, numa conta de nível 6 (dividendo de 4 dígitos, a
+      criança pode usar 8+ estimativas): a chave rola verticalmente sem
+      esconder o dividendo/divisor nem o teclado por baixo.
+- [ ] Teclado do app em Dividir funciona sem o teclado do iOS abrir por cima.
+- [ ] Tabela de Pitágoras (botão 📋) abre, destaca o cruzamento ao tocar
+      linha + coluna, e fecha (X ou tocando fora) sem travar a conta em
+      andamento.
+- [ ] TTS lê o enunciado do problema de divisão em pt-BR e degrada
+      graciosamente sem voz (mostra só o texto).
 
 ## Privacidade
 

@@ -9,11 +9,12 @@
 // de qualquer operação de fato acontecer.
 
 const DB_NOME = 'tabuada-turbo-db';
-const DB_VERSAO = 1;
+const DB_VERSAO = 2;
 
 const STORE_FATOS = 'fatos';
 const STORE_RESPOSTAS = 'respostas';
 const STORE_SESSOES = 'sessoes';
+const STORE_DIVISOES = 'divisoes';
 
 let conexaoPromise = null;
 
@@ -40,6 +41,12 @@ function abrirConexao() {
       }
       if (!db.objectStoreNames.contains(STORE_SESSOES)) {
         db.createObjectStore(STORE_SESSOES, { keyPath: 'id', autoIncrement: true });
+      }
+      // v2: store de divisão (Método das Estimativas). Guard `contains`
+      // garante que um banco v1 em produção só ganha esta store nova, sem
+      // recriar (e perder) as 3 de cima.
+      if (!db.objectStoreNames.contains(STORE_DIVISOES)) {
+        db.createObjectStore(STORE_DIVISOES, { keyPath: 'id', autoIncrement: true });
       }
     };
 
@@ -105,24 +112,44 @@ export async function getUltimasSessoes(n) {
   return n ? ordenadas.slice(-n) : ordenadas;
 }
 
+// ---------- divisões ----------
+// NÃO usa a store `sessoes` (essa alimenta o avanço de semana da tabuada).
+// Cada problema de divisão concluído vira um registro aqui; o nível atual
+// vive nas prefs (nivelDivisao), como o restante das configurações do app.
+
+export async function addDivisao(registro) {
+  return comStore(STORE_DIVISOES, 'readwrite', (store) =>
+    promisifyRequest(store.add(registro))
+  );
+}
+
+export async function getTodasDivisoes() {
+  const resultado = await comStore(STORE_DIVISOES, 'readonly', (store) =>
+    promisifyRequest(store.getAll())
+  );
+  return (resultado || []).slice().sort((a, b) => a.id - b.id);
+}
+
 // ---------- utilidades ----------
 
 export async function exportarTudo() {
-  const [fatos, respostas, sessoes] = await Promise.all([
+  const [fatos, respostas, sessoes, divisoes] = await Promise.all([
     getTodosFatos(),
     getTodasRespostas(),
     getUltimasSessoes(),
+    getTodasDivisoes(),
   ]);
-  return { fatos, respostas, sessoes };
+  return { fatos, respostas, sessoes, divisoes };
 }
 
-/** Limpa as 3 stores. Usado apenas em testes. */
+/** Limpa as 4 stores. Usado apenas em testes. */
 export async function resetParaTestes() {
   const db = await abrirConexao();
-  const tx = db.transaction([STORE_FATOS, STORE_RESPOSTAS, STORE_SESSOES], 'readwrite');
+  const tx = db.transaction([STORE_FATOS, STORE_RESPOSTAS, STORE_SESSOES, STORE_DIVISOES], 'readwrite');
   await Promise.all([
     promisifyRequest(tx.objectStore(STORE_FATOS).clear()),
     promisifyRequest(tx.objectStore(STORE_RESPOSTAS).clear()),
     promisifyRequest(tx.objectStore(STORE_SESSOES).clear()),
+    promisifyRequest(tx.objectStore(STORE_DIVISOES).clear()),
   ]);
 }
