@@ -9,7 +9,6 @@ import * as db from './db.js';
 import { registrarResposta as schedulerRegistrarResposta, deveAvancarSemana, isFatoMaduro } from './scheduler.js';
 import {
   MATURO_HALFLIFE_MIN,
-  AVANCO_SEMANA_SESSOES,
   STATUS_VERMELHO_TAXA_ERRO,
   MS_POR_DIA,
 } from './config.js';
@@ -79,9 +78,11 @@ export async function registrarSessaoConcluida(resumo, prefsAtuais, agora = Date
 
   const streak = calcularStreak(prefsAtuais, agora);
 
-  const ultimasSessoes = await db.getUltimasSessoes(AVANCO_SEMANA_SESSOES);
+  // Histórico maior de propósito: deveAvancarSemana filtra pelas sessões da
+  // SEMANA ATUAL, e as N últimas sessões globais podem ser de outra semana.
+  const ultimasSessoes = await db.getUltimasSessoes(30);
   const avanca = deveAvancarSemana(
-    ultimasSessoes.map((s) => ({ acertoSemanaPct: s.acertoSemanaPct })),
+    ultimasSessoes.map((s) => ({ acertoSemanaPct: s.acertoSemanaPct, semana: s.semana })),
     prefsAtuais.semanaAtual
   );
   const semanaAtual = avanca ? prefsAtuais.semanaAtual + 1 : prefsAtuais.semanaAtual;

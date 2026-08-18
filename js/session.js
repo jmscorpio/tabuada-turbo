@@ -168,8 +168,12 @@ export function avancarFase(sessionState, fatosState, agora, { semanaAtual, rng 
 
 /**
  * Resumo da sessão a partir dos resultados acumulados.
+ * Com `fatosState` + `semanaAtual`, acertoSemanaPct é calculado só sobre os
+ * resultados de fatos da semana atual (critério do SPEC para o avanço de
+ * semana). Se a sessão não tocou nenhum fato da semana atual (ex.: semana 6,
+ * de integração) — ou sem os parâmetros — cai no percentual geral da sessão.
  */
-export function calcularResumoSessao(sessionState) {
+export function calcularResumoSessao(sessionState, { fatosState = null, semanaAtual = null } = {}) {
   const { resultados } = sessionState;
   const totalFatos = resultados.length;
   const acertos = resultados.filter((r) => r.correto).length;
@@ -179,7 +183,17 @@ export function calcularResumoSessao(sessionState) {
     temposValidos.length > 0
       ? temposValidos.reduce((soma, t) => soma + t, 0) / temposValidos.length
       : 0;
-  const acertoSemanaPct = totalFatos > 0 ? acertos / totalFatos : 0;
+
+  let acertoSemanaPct = totalFatos > 0 ? acertos / totalFatos : 0;
+  if (fatosState && semanaAtual !== null) {
+    const chavesDaSemana = new Set(
+      fatosState.filter((f) => f.semanaSugerida === semanaAtual).map((f) => f.chave)
+    );
+    const daSemana = resultados.filter((r) => chavesDaSemana.has(r.chave));
+    if (daSemana.length > 0) {
+      acertoSemanaPct = daSemana.filter((r) => r.correto).length / daSemana.length;
+    }
+  }
 
   return { totalFatos, acertos, erros, tempoMedioMs, acertoSemanaPct };
 }

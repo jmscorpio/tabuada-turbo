@@ -145,7 +145,7 @@ export function montar(container, ctx) {
 
   async function concluirSessao() {
     clearInterval(intervaloCronometro);
-    const resumo = ctx.session.calcularResumoSessao(sessionState);
+    const resumo = ctx.session.calcularResumoSessao(sessionState, { fatosState, semanaAtual });
     const estrelas = calcularEstrelas(resumo.tempoMedioMs, ctx.config);
 
     const deltas = await ctx.analytics.registrarSessaoConcluida(resumo, ctx.getPrefs(), Date.now());

@@ -3,8 +3,6 @@
 // com status por tabuada, gráfico dos últimos 7 dias, checkboxes de
 // tabuadas já sabidas, seletor de semana, pausar app e exportar dados.
 
-let desbloqueado = false;
-
 const RÓTULOS_STATUS = { verde: 'Sabe', amarelo: 'Treino', vermelho: 'Atenção' };
 
 function renderizarGatePin(container, ctx) {
@@ -30,7 +28,6 @@ function renderizarGatePin(container, ctx) {
 
   function tentar() {
     if (input.value === ctx.config.PIN_RESPONSAVEL) {
-      desbloqueado = true;
       renderizarDashboard(container, ctx);
     } else {
       erro.textContent = 'PIN incorreto. Tente novamente.';
@@ -221,10 +218,7 @@ async function renderizarDashboard(container, ctx) {
 }
 
 export function montar(container, ctx) {
-  desbloqueado = false;
   renderizarGatePin(container, ctx);
 }
 
-export function desmontar() {
-  desbloqueado = false;
-}
+export function desmontar() {}

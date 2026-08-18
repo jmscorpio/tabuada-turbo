@@ -5,10 +5,8 @@
 
 const CHAVE_RECORDES = 'tt_recordes_v1';
 
-let containerAtual = null;
 let ctxAtual = null;
 let intervalosAtivos = [];
-let vozIndisponivelAvisada = false;
 
 function limparIntervalos() {
   intervalosAtivos.forEach(clearInterval);
@@ -435,9 +433,6 @@ async function renderizarDetetive(container, ctx, fatosMaduros) {
   container.appendChild(raiz);
 
   const vozOk = await ctx.tts.vozDisponivel();
-  if (!vozOk && !vozIndisponivelAvisada) {
-    vozIndisponivelAvisada = true;
-  }
 
   async function proximaConta() {
     if (indice >= fila.length) {
@@ -527,15 +522,12 @@ async function renderizarDetetive(container, ctx, fatosMaduros) {
 // ---------------------------------------------------------------------
 
 export function montar(container, ctx) {
-  containerAtual = container;
   ctxAtual = ctx;
-  vozIndisponivelAvisada = false;
   renderizarHub(container, ctx);
 }
 
 export function desmontar() {
   limparIntervalos();
   ctxAtual?.tts?.pararFala?.();
-  containerAtual = null;
   ctxAtual = null;
 }

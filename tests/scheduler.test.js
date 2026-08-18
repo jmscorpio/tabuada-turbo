@@ -500,29 +500,37 @@ describe('getNextFacts', () => {
 });
 
 describe('deveAvancarSemana', () => {
-  test('true só com 3 sessões consecutivas > 85%', () => {
+  const s = (pct, semana) => ({ acertoSemanaPct: pct, semana });
+
+  test('true só com 3 sessões da semana atual > 85%', () => {
+    assert.equal(deveAvancarSemana([s(0.9, 1), s(0.9, 1), s(0.9, 1)], 1), true);
+  });
+
+  test('false se qualquer uma das últimas 3 da semana ficar <= 85%', () => {
+    assert.equal(deveAvancarSemana([s(0.9, 1), s(0.8, 1), s(0.9, 1)], 1), false);
+  });
+
+  test('false com menos de 3 sessões da semana atual no histórico', () => {
+    assert.equal(deveAvancarSemana([s(0.95, 1)], 1), false);
+  });
+
+  test('sessões de semanas anteriores não contam (regressão: avanço em cascata)', () => {
+    // Recém-avançou da semana 1 para a 2: as 2 sessões boas da semana 1 não
+    // podem ser reaproveitadas para avançar de novo com 1 única sessão boa.
+    assert.equal(deveAvancarSemana([s(0.95, 1), s(0.95, 1), s(0.95, 2)], 2), false);
+    // Só avança quando houver 3 sessões boas jogadas NA semana 2.
     assert.equal(
-      deveAvancarSemana([{ acertoSemanaPct: 0.9 }, { acertoSemanaPct: 0.9 }, { acertoSemanaPct: 0.9 }], 1),
+      deveAvancarSemana([s(0.95, 1), s(0.95, 1), s(0.95, 2), s(0.95, 2), s(0.95, 2)], 2),
       true
     );
   });
 
-  test('false se qualquer uma das últimas 3 ficar <= 85%', () => {
-    assert.equal(
-      deveAvancarSemana([{ acertoSemanaPct: 0.9 }, { acertoSemanaPct: 0.8 }, { acertoSemanaPct: 0.9 }], 1),
-      false
-    );
+  test('considera as últimas 3 da semana atual mesmo com sessões de outras semanas no meio', () => {
+    assert.equal(deveAvancarSemana([s(0.9, 2), s(0.5, 1), s(0.9, 2), s(0.9, 2)], 2), true);
   });
 
-  test('false com menos de 3 sessões no histórico', () => {
-    assert.equal(deveAvancarSemana([{ acertoSemanaPct: 0.95 }], 1), false);
-  });
-
-  test('false na semana máxima (6)', () => {
-    assert.equal(
-      deveAvancarSemana([{ acertoSemanaPct: 0.95 }, { acertoSemanaPct: 0.95 }, { acertoSemanaPct: 0.95 }], 6),
-      false
-    );
+  test('false na semana máxima (SEMANA_MAX)', () => {
+    assert.equal(deveAvancarSemana([s(0.95, 6), s(0.95, 6), s(0.95, 6)], 6), false);
   });
 });
 

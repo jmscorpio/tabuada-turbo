@@ -47,4 +47,5 @@ export const NUMEROS_FACEIS = [1, 2, 3, 10];
 
 // Identidade do app
 export const APP_NOME = 'Tabuada Turbo';
-export const CACHE_VERSAO = 'v1';
+// A versão do cache do PWA vive em sw.js (CACHE_VERSAO de lá): Service
+// Worker clássico não importa módulos ES, então o valor não pode morar aqui.

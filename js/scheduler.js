@@ -19,6 +19,7 @@ import {
   MAX_NOVOS_POR_SESSAO,
   AVANCO_SEMANA_PCT,
   AVANCO_SEMANA_SESSOES,
+  SEMANA_MAX,
   STATUS_VERMELHO_TAXA_ERRO,
   NUMEROS_FACEIS,
 } from './config.js';
@@ -358,14 +359,19 @@ export function getNextFacts(
 
 /**
  * Avanço automático de semana: true quando as últimas AVANCO_SEMANA_SESSOES
- * sessões tiveram acertoSemanaPct > AVANCO_SEMANA_PCT.
- * @param {{acertoSemanaPct:number}[]} ultimasSessoes já ordenadas da mais
- *   antiga para a mais recente (ou qualquer ordem — usamos as N últimas).
+ * sessões JOGADAS NA SEMANA ATUAL tiveram acertoSemanaPct > AVANCO_SEMANA_PCT.
+ * Sessões de semanas anteriores não contam: sem esse filtro, as mesmas
+ * sessões boas antigas seriam reaproveitadas a cada avanço e a semana
+ * avançaria em cascata (1 → 6 em poucas sessões), pulando os fatos novos
+ * das semanas intermediárias.
+ * @param {{acertoSemanaPct:number, semana:number}[]} ultimasSessoes ordenadas
+ *   da mais antiga para a mais recente (usamos as N últimas da semana atual).
  * @param {number} semanaAtual
  */
 export function deveAvancarSemana(ultimasSessoes, semanaAtual) {
-  if (semanaAtual >= 6) return false;
-  if (ultimasSessoes.length < AVANCO_SEMANA_SESSOES) return false;
-  const recentes = ultimasSessoes.slice(-AVANCO_SEMANA_SESSOES);
+  if (semanaAtual >= SEMANA_MAX) return false;
+  const daSemanaAtual = ultimasSessoes.filter((s) => s.semana === semanaAtual);
+  if (daSemanaAtual.length < AVANCO_SEMANA_SESSOES) return false;
+  const recentes = daSemanaAtual.slice(-AVANCO_SEMANA_SESSOES);
   return recentes.every((s) => s.acertoSemanaPct > AVANCO_SEMANA_PCT);
 }

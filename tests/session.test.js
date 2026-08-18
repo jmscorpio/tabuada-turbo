@@ -210,6 +210,40 @@ describe('calcularResumoSessao', () => {
     assert.equal(resumo.tempoMedioMs, 0);
     assert.equal(resumo.acertoSemanaPct, 0);
   });
+
+  test('com fatosState + semanaAtual, acertoSemanaPct considera só fatos da semana atual', () => {
+    const fatosState = [
+      { chave: '6x7', semanaSugerida: 5 },
+      { chave: '7x8', semanaSugerida: 5 },
+      { chave: '2x5', semanaSugerida: 1 },
+    ];
+    const sessao = {
+      resultados: [
+        { chave: '2x5', correto: true, tempoMs: 1000 }, // revisão de outra semana
+        { chave: '6x7', correto: true, tempoMs: 2000 },
+        { chave: '6x7', correto: false, tempoMs: 5000 },
+        { chave: '7x8', correto: false, tempoMs: 4000 },
+      ],
+    };
+    const resumo = calcularResumoSessao(sessao, { fatosState, semanaAtual: 5 });
+    // 3 resultados de fatos da semana 5, 1 acerto → 1/3 (e não 2/4 da sessão)
+    assert.ok(Math.abs(resumo.acertoSemanaPct - 1 / 3) < 1e-9);
+    // os demais campos seguem sendo da sessão inteira
+    assert.equal(resumo.totalFatos, 4);
+    assert.equal(resumo.acertos, 2);
+  });
+
+  test('sem nenhum fato da semana atual na sessão, cai no percentual geral', () => {
+    const fatosState = [{ chave: '2x5', semanaSugerida: 1 }];
+    const sessao = {
+      resultados: [
+        { chave: '2x5', correto: true, tempoMs: 1000 },
+        { chave: '2x5', correto: false, tempoMs: 3000 },
+      ],
+    };
+    const resumo = calcularResumoSessao(sessao, { fatosState, semanaAtual: 6 });
+    assert.equal(resumo.acertoSemanaPct, 0.5);
+  });
 });
 
 describe('cenário integrado: sessão completa com >= 5 fatos', () => {
